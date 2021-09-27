@@ -1,8 +1,22 @@
-import { Model } from 'sequelize';
+import Mongoose from 'mongoose';
 
-export default class user extends Model {
-    public id!: number;
-    public nonce!: number;
-    public publicAddress!: string;
-    public username?: string;
-}
+const User = new Mongoose.Schema({
+    nome: {
+        type: String,
+        required: false
+    },
+    publicAddress: {
+        type: String,
+        required: true
+    },
+    nonce: {
+        type: Number,
+        required: true,
+        defaultValue: () => Math.floor(Math.random() * 1000000)
+    }
+},
+{
+    timestamps: true,
+});
+
+export default Mongoose.model('User', User);

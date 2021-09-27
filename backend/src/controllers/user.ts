@@ -3,13 +3,7 @@ import UserService from '../services/user';
 
 class UserController {
     public async find(req: Request, res: Response, next: NextFunction) {
-        const whereClause = req.query && req.query.publicAddress
-            ? {
-                where: { publicAddress: req.query.publicAddress },
-            }
-            : undefined;
-
-        return UserService.list(whereClause).then((users) => res.json(users)).catch(next);
+        return UserService.list().then((users) => res.json(users)).catch(next);
     }
 
     public async show(req: Request, res: Response, next: NextFunction) {

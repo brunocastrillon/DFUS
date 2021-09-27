@@ -1,15 +1,21 @@
 import cors from 'cors';
 import express from 'express';
 import routes from './routes';
+import MongoMiddleware from './middleware/mongo';
 
 class Application {
     public application: express.Application;
 
     constructor() {
         this.application = express();
+        this.dados();
         this.middleware();
         this.route();        
     }
+
+    dados() {
+        new MongoMiddleware().connect;
+    }    
 
     middleware() {
         this.application.use(express.json());

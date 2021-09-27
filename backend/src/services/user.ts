@@ -1,16 +1,22 @@
 import UserModel from '../models/user';
 
 class UserService {
-    public async list(whereClause: any) {
-        return UserModel.findAll(whereClause).then((users: UserModel[]) => users);
+    public async list() {
+        await UserModel.find({}).then((users: any) => {
+            return users;
+        });
     }
 
-    public async get(userId: any) {
-        return UserModel.findByPk(userId).then((user: UserModel | null) => user);
+    public async get(id: any) {
+        await UserModel.findOne({ _id: id }).then((user: any) => {
+            return user;
+        });
     }
 
-    public async create(model: any) {
-        UserModel.create(model).then((user: UserModel) => user);
+    public async create(data: any) {
+        await UserModel.create(data).then(() => {
+            return data;
+        });
     }
 }
 
