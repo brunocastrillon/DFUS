@@ -1,15 +1,19 @@
 import Mongoose from 'mongoose';
 
 const User = new Mongoose.Schema({
-    nome: {
+    Id: {
         type: String,
         required: false
     },
-    publicAddress: {
+    Name: {
+        type: String,
+        required: false
+    },    
+    PublicAddress: {
         type: String,
         required: true
     },
-    nonce: {
+    Nonce: {
         type: Number,
         required: true,
         defaultValue: () => Math.floor(Math.random() * 1000000)

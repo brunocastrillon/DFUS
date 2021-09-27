@@ -13,9 +13,9 @@ class UserRote {
 
     rotas() {
         this.routes.get('/', UserController.find);
-        this.routes.get('/:userId', UserController.show);
+        this.routes.get('/:userId', jwt(config), UserController.show);
         this.routes.post('/', UserController.store);
-    }    
+    }
 }
 
 export default new UserRote().routes;

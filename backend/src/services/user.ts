@@ -13,6 +13,10 @@ class UserService {
         });
     }
 
+    public async getByAddress(address: any) {
+        return await UserModel.findOne({ publicAddress: address });
+    }    
+
     public async create(data: any) {
         await UserModel.create(data).then(() => {
             return data;

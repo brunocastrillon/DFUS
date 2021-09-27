@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import UserRoute from './user';
+import AuthRoute from './auth';
 
 class Routes {
     public routes: Router;
@@ -12,7 +13,8 @@ class Routes {
     rotas() {
         this.routes.get('/', (req, res) => res.send('Decentralized-File-Upload-and-Sharing'));
 
-        this.routes.use('/usuario', UserRoute);
+        this.routes.use('/auth', AuthRoute);
+        this.routes.use('/user', UserRoute);
     }
 }
 
