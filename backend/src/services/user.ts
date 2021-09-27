@@ -1,25 +1,28 @@
 import UserModel from '../models/user';
 
 class UserService {
-    public async list() {
-        await UserModel.find({}).then((users: any) => {
+    public async list() : Promise<any> {
+        return await UserModel.find({}).then((users: any) => {
             return users;
         });
     }
 
-    public async get(id: any) {
-        await UserModel.findOne({ _id: id }).then((user: any) => {
+    public async get(id: any) : Promise<any> {
+        return await UserModel.findOne({ _id: id }).then((user: any) => {
             return user;
         });
     }
 
-    public async getByAddress(address: any) {
-        return await UserModel.findOne({ publicAddress: address });
+    public async getByAddress(address: any) : Promise<any> {
+        return await UserModel.findOne({ PublicAddress: address }).then((user: any) => {
+            return user;
+        });
     }    
 
-    public async create(data: any) {
-        await UserModel.create(data).then(() => {
-            return data;
+    public async create(data: any) : Promise<any> {
+        data.Nonce = Math.floor(Math.random() * 1000000);
+        return await UserModel.create(data).then((user) => {
+            return user;
         });
     }
 }

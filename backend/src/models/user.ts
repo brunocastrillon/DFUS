@@ -15,8 +15,7 @@ const User = new Mongoose.Schema({
     },
     Nonce: {
         type: Number,
-        required: true,
-        defaultValue: () => Math.floor(Math.random() * 1000000)
+        required: true
     }
 },
 {

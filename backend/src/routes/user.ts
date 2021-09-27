@@ -13,7 +13,7 @@ class UserRote {
 
     rotas() {
         this.routes.get('/', UserController.find);
-        this.routes.get('/:userId', jwt(config), UserController.show);
+        this.routes.get('/:publicAddress', UserController.show);
         this.routes.post('/', UserController.store);
     }
 }

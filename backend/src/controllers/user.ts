@@ -7,17 +7,13 @@ class UserController {
     }
 
     public async show(req: Request, res: Response, next: NextFunction) {
-        if ((req as any).user.payload.id !== +req.params.userId) {
-            return res
-                .status(401)
-                .send({ error: 'You can can only access yourself' });
-        }
-
-        return UserService.get(req.params.userId).then((user) => res.json(user)).catch(next);
+        const user = await UserService.getByAddress(req.params.publicAddress);
+        return res.status(201).json({ user });
     }
 
     public async store(req: Request, res: Response, next: NextFunction) {
-        UserService.create(req.body).then((user) => res.json(user)).catch(next);
+        const user = await UserService.create(req.body);
+        return res.status(201).json({ user });
     }
 }
 

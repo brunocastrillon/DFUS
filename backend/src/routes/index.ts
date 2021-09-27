@@ -11,10 +11,10 @@ class Routes {
     }
 
     rotas() {
-        this.routes.get('/', (req, res) => res.send('Decentralized-File-Upload-and-Sharing'));
-
         this.routes.use('/auth', AuthRoute);
-        this.routes.use('/user', UserRoute);
+        this.routes.use('/users', UserRoute);
+
+        this.routes.get('/', (req, res) => res.send('Decentralized-File-Upload-and-Sharing'));
     }
 }
 

@@ -7,7 +7,10 @@ import { config } from '../config';
 
 class AuthService {
 
-    public async create(signature: any, publicAddress: any) {
+    public async create(publicAddress: any, signature: any) {
+        
+        console.log(publicAddress);
+        console.log(signature);
 
         let userModel = new UserModel();
 
