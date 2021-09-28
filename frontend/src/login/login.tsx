@@ -37,12 +37,6 @@ export const Login = ({ onLoggedIn }: Props): JSX.Element => {
         nonce: string;
     }) => {
         try {
-            console.log(publicAddress);
-            console.log(nonce);
-
-            publicAddress = "0x5ed97ed5b61cf820420f853eaa3bdb24aea0e5cb";
-            nonce = "547341";
-
             const signature = await web3!.eth.personal.sign(`I am signing my one-time nonce: ${nonce}`, publicAddress, ''); // MetaMask will ignore the password argument here
             return { publicAddress, signature };
         } catch (err) {
@@ -60,7 +54,6 @@ export const Login = ({ onLoggedIn }: Props): JSX.Element => {
         }).then((response) => response.json());
 
     const handleClick = async () => {
-        // Check if MetaMask is installed
         if (!(window as any).ethereum) {
             window.alert('Please install MetaMask first.');
             return;
@@ -89,13 +82,12 @@ export const Login = ({ onLoggedIn }: Props): JSX.Element => {
         const publicAddress = coinbase.toLowerCase();
         setLoading(true);
 
-        // Look if user with current publicAddress is already present on backend
         fetch(`${process.env.REACT_APP_BACKEND_URL}/users/${publicAddress}`)
             .then((response) => response.json())
-            .then((user) => user.length ? user[0] : handleSignup(publicAddress))    // - If yes, retrieve it. If no, create it.
-            .then(handleSignMessage)                                                // - Popup MetaMask confirmation modal to sign message
-            .then(handleAuthenticate)                                               // - Send signature to backend on the /auth route
-            .then(onLoggedIn)                                                       // - Pass accessToken back to parent component (to save it in localStorage)
+            .then((data) => data !== null ? data.user : handleSignup(publicAddress))
+            .then(handleSignMessage)
+            .then(handleAuthenticate)
+            .then(onLoggedIn)
             .catch((err) => {
                 console.log(err);
                 window.alert(err);

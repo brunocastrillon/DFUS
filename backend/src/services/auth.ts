@@ -8,10 +8,9 @@ import { config } from '../config';
 class AuthService {
 
     public async create(signature: any, publicAddress: any) {
-        
         let userModel = new UserModel();
 
-        await UserService.getByAddress(publicAddress)
+        return await UserService.getByAddress(publicAddress)
             .then((userModel) => {
                 if (!(userModel)) {
                     throw new Error('User is not defined in "Verify digital signature".'); // Should not happen, we should have already sent the response
@@ -34,21 +33,20 @@ class AuthService {
                     //return null;
                 }
             })
-            .then((userModel) => {
+            .then(async (userModel) => {
                 if (!(userModel)) {
                     throw new Error('User is not defined in "Generate a new nonce for the user".');  // Should not happen, we should have already sent the response
                 }
-                console.log(userModel);
-                userModel.Nonce = Math.floor(Math.random() * 10000);
-                console.log(userModel);
-                return userModel.save();
+
+                userModel.nonce = Math.floor(Math.random() * 1000000);
+                return await userModel.save();
             })
             .then((userModel) => { // https://github.com/auth0/node-jsonwebtoken
                 return new Promise<string>((resolve, reject) =>
                     jwt.sign(
                         {
                             payload: {
-                                id: userModel.Id,
+                                id: userModel.id,
                                 publicAddress,
                             },
                         },
@@ -63,12 +61,13 @@ class AuthService {
                             if (!token) {
                                 return new Error('Empty token');
                             }
+                            console.log(token);
                             return resolve(token);
                         }
                     )
                 );
             })
-            .then((accessToken: string) => accessToken)
+            .then((accessToken: string) => accessToken )
     }
 }
 

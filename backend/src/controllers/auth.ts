@@ -10,7 +10,7 @@ class AuthController {
                 .status(400)
                 .send({ error: 'Request should have signature and publicAddress' });
 
-        AuthService.create(signature, publicAddress);
+        AuthService.create(signature, publicAddress).then((accessToken) => res.json({ accessToken: accessToken })).catch(next);
     }
 }
 

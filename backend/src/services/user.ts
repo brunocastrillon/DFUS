@@ -14,7 +14,7 @@ class UserService {
     }
 
     public async getByAddress(address: any) : Promise<any> {
-        return await UserModel.findOne({ publicAddress: address }).then((user: any) => {
+        return await UserModel.findOne({ publicAddress: address }, 'publicAddress nonce').then((user: any) => {
             return user;
         });
     }    
