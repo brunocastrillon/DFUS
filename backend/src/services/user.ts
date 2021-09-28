@@ -14,13 +14,13 @@ class UserService {
     }
 
     public async getByAddress(address: any) : Promise<any> {
-        return await UserModel.findOne({ PublicAddress: address }).then((user: any) => {
+        return await UserModel.findOne({ publicAddress: address }).then((user: any) => {
             return user;
         });
     }    
 
     public async create(data: any) : Promise<any> {
-        data.Nonce = Math.floor(Math.random() * 1000000);
+        data.nonce = Math.floor(Math.random() * 1000000);
         return await UserModel.create(data).then((user) => {
             return user;
         });

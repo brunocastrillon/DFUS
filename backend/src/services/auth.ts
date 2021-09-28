@@ -7,11 +7,8 @@ import { config } from '../config';
 
 class AuthService {
 
-    public async create(publicAddress: any, signature: any) {
+    public async create(signature: any, publicAddress: any) {
         
-        console.log(publicAddress);
-        console.log(signature);
-
         let userModel = new UserModel();
 
         await UserService.getByAddress(publicAddress)
@@ -20,7 +17,7 @@ class AuthService {
                     throw new Error('User is not defined in "Verify digital signature".'); // Should not happen, we should have already sent the response
                 }
 
-                const msg = `I am signing my one-time nonce: ${userModel.Nonce}`;
+                const msg = `I am signing my one-time nonce: ${userModel.nonce}`;
 
                 // We now are in possession of msg, publicAddress and signature. We will use a helper from eth-sig-util to extract the address from the signature
                 const msgBufferHex = bufferToHex(Buffer.from(msg, 'utf8'));
@@ -41,8 +38,9 @@ class AuthService {
                 if (!(userModel)) {
                     throw new Error('User is not defined in "Generate a new nonce for the user".');  // Should not happen, we should have already sent the response
                 }
-
+                console.log(userModel);
                 userModel.Nonce = Math.floor(Math.random() * 10000);
+                console.log(userModel);
                 return userModel.save();
             })
             .then((userModel) => { // https://github.com/auth0/node-jsonwebtoken

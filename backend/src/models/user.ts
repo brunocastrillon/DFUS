@@ -1,19 +1,19 @@
 import Mongoose from 'mongoose';
 
 const User = new Mongoose.Schema({
-    Id: {
+    id: {
         type: String,
         required: false
     },
-    Name: {
+    name: {
         type: String,
         required: false
     },    
-    PublicAddress: {
+    publicAddress: {
         type: String,
         required: true
     },
-    Nonce: {
+    nonce: {
         type: Number,
         required: true
     }

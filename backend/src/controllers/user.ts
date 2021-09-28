@@ -3,17 +3,15 @@ import UserService from '../services/user';
 
 class UserController {
     public async find(req: Request, res: Response, next: NextFunction) {
-        return UserService.list().then((users) => res.json(users)).catch(next);
+        return UserService.list().then((users) => res.json({ users: users })).catch(next);
     }
 
     public async show(req: Request, res: Response, next: NextFunction) {
-        const user = await UserService.getByAddress(req.params.publicAddress);
-        return res.status(201).json({ user });
+        return await UserService.getByAddress(req.params.publicAddress).then((user) => res.json({ user: user })).catch(next);
     }
 
     public async store(req: Request, res: Response, next: NextFunction) {
-        const user = await UserService.create(req.body);
-        return res.status(201).json({ user });
+        return await UserService.create(req.body).then((user) => res.json({ user: user })).catch(next);
     }
 }
 
