@@ -1,9 +1,26 @@
-import './login.css';
-
 import React, { useState } from 'react';
-import Web3 from 'web3';
+
+import {
+    Grid,
+    Container,
+    // Input,
+    // InputLabel,
+    // InputAdornment,
+    Card,
+    CardContent,
+    IconButton,
+    Button, Tooltip, Box
+    // FormControl,
+    // CircularProgress
+} from '@material-ui/core';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { Auth } from '../type';
+
+import Web3 from 'web3';
+
+import logoSistema from '../assets/images/biblioteca-01.jpg'; //'../assets/images/illustrations/login.svg' //'../../assets/images/illustrations/login.svg';
+import logoMetamask from '../assets/images/metamask-white.png';
 
 interface Props {
     onLoggedIn: (auth: Auth) => void;
@@ -96,22 +113,75 @@ export const Login = ({ onLoggedIn }: Props): JSX.Element => {
     };
 
     return (
-        <div>
-            <p>
-                Please select your login method.
-                <br />
-                For the purpose of this demo, only MetaMask login is
-                implemented.
-            </p>
-            <button className="Login-button Login-mm" onClick={handleClick}>
-                {loading ? 'Loading...' : 'Login with MetaMask'}
-            </button>
-            <button className="Login-button Login-fb" disabled>
-                Login with Facebook
-            </button>
-            <button className="Login-button Login-email" disabled>
-                Login with Email
-            </button>
+        <div className="app-wrapper min-vh-100">
+            <div className="app-main flex-column">
+                <div className="app-content p-5">
+                    <div className="app-content--inner d-flex align-items-center p-5">
+                        <div className="flex-grow-1 w-100 d-flex align-items-center p-5">
+                            <div className="bg-composed-wrapper--content py-5">
+                                <Container maxWidth="lg">
+                                    <Grid container spacing={4}>
+                                        <Grid item xs={12} lg={3} className="d-none d-xl-flex align-items-center">
+                                        </Grid>
+
+                                        <Grid item xs={12} lg={6} className="d-flex flex-column align-items-center">
+
+                                            {/* <span className="w-100 text-left text-md-center pb-4">
+                                                <h1 className="display-3 text-xl-left text-center mb-3 font-weight-bold d-flex justify-content-center">
+                                                    Faça login na sua conta
+                                                </h1>
+                                                <p className="font-size-lg text-xl-left text-center mb-0 text-black-50 d-flex justify-content-center">
+                                                    Faça o login abaixo para continuar.
+                                                </p>
+                                            </span>
+
+                                            <Card className="m-0 w-100 p-0 border-0">
+                                                <CardContent className="p-3 d-flex justify-content-center">
+                                                    <Button color="inherit" className="m-2 text-black btn-gradient btn-gradient-inverse bg-sunny-morning" onClick={handleClick}>
+                                                        <span className="btn-wrapper--label">
+                                                            {loading ? 'Login with MetaMask' : 'Login with MetaMask'}
+                                                        </span>
+                                                        <img alt="..." className="w-50 mx-auto d-block img-fluid" src={logoMetamask} />
+                                                    </Button>
+                                                </CardContent>
+                                            </Card> */}
+
+                                            <Card className="card-box p-3 bg-night-sky text-white mb-1 w-100 rounded-sm">
+                                                <div className="text-center">
+                                                    <div className="avatar-icon-wrapper rounded-circle m-0">
+                                                        <div className="d-block p-0 avatar-icon-wrapper m-0 d-90">
+                                                            <div className="rounded-circle overflow-hidden">
+                                                                {/* <img alt="..." className="img-fluid" src={avatar2} /> */}
+                                                                <img alt="..." className="w-90 mx-auto d-block img-fluid" src={logoMetamask} />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <h3 className="font-weight-bold mt-0">
+                                                        Login with Metamask
+                                                    </h3>
+                                                    <p className="mb-3 text-white-50">
+                                                        {' '}
+                                                        Sua biblioteca de documentos descentralizada
+                                                    </p>                                                    
+                                                    <Button color="inherit" variant="outlined" className="m-3 btn-gradient bg-night-sky" onClick={handleClick}>
+                                                        <span className="btn-wrapper--label">
+                                                            {loading ? 'Login' : 'Login'}
+                                                        </span>
+                                                    </Button>
+                                                </div>
+                                            </Card>
+
+                                        </Grid>
+
+                                        <Grid item xs={12} lg={3} className="d-none d-xl-flex align-items-center">
+                                        </Grid>
+                                    </Grid>
+                                </Container>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };
