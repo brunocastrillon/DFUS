@@ -48,7 +48,7 @@ export const Login = ({ onLoggedIn }: Props): JSX.Element => {
 
     const handleSignMessage = async ({
         publicAddress,
-        nonce,
+        nonce
     }: {
         publicAddress: string;
         nonce: string;
@@ -101,7 +101,7 @@ export const Login = ({ onLoggedIn }: Props): JSX.Element => {
 
         fetch(`${process.env.REACT_APP_BACKEND_URL}/users/${publicAddress}`)
             .then((response) => response.json())
-            .then((data) => data !== null ? data.user : handleSignup(publicAddress))
+            .then((data) => data.user !== null ? data.user : handleSignup(publicAddress))
             .then(handleSignMessage)
             .then(handleAuthenticate)
             .then(onLoggedIn)
@@ -149,19 +149,16 @@ export const Login = ({ onLoggedIn }: Props): JSX.Element => {
                                             <Card className="card-box p-3 bg-night-sky text-white mb-1 w-100 rounded-sm">
                                                 <div className="text-center">
                                                     <div className="avatar-icon-wrapper rounded-circle m-0">
-                                                        <div className="d-block p-0 avatar-icon-wrapper m-0 d-90">
-                                                            <div className="rounded-circle overflow-hidden">
-                                                                {/* <img alt="..." className="img-fluid" src={avatar2} /> */}
-                                                                <img alt="..." className="w-90 mx-auto d-block img-fluid" src={logoMetamask} />
-                                                            </div>
+                                                        <div className="rounded-circle overflow-hidden">
+                                                            <img alt="..." className="w-90 mx-auto d-block img-fluid" src={logoMetamask} />
                                                         </div>
                                                     </div>
-                                                    <h3 className="font-weight-bold mt-0">
+                                                    <h3 className="font-weight-bold mt-0 text-white-50">
                                                         Login with Metamask
                                                     </h3>
                                                     <p className="mb-3 text-white-50">
                                                         {' '}
-                                                        Sua biblioteca de documentos descentralizada
+                                                        Sua biblioteca de documentos descentralizados
                                                     </p>                                                    
                                                     <Button color="inherit" variant="outlined" className="m-3 btn-gradient bg-night-sky" onClick={handleClick}>
                                                         <span className="btn-wrapper--label">

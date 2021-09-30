@@ -319,7 +319,7 @@ export const App = (): JSX.Element => {
 						<div className="header-nav-menu d-none d-lg-block">
 							<div className="d-flex justify-content-center">
 								<span className="w-100 d-flex justify-content-center pb-0">
-									<h1 className="display-3 text-center mb-3 mt-3 font-weight-bold text-white-50">
+									<h1 className="display-3 text-center mb-3 mt-3 font-weight-bold text-white">
 										Alexandria
 									</h1>
 									{/* <p className="font-size-lg text-center mb-0 text-white-50">

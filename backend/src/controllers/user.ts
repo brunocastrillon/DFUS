@@ -11,7 +11,7 @@ class UserController {
     }
 
     public async store(req: Request, res: Response, next: NextFunction) {
-        return await UserService.create(req.body).then((user) => res.json({ user: user })).catch(next);
+        return await UserService.create(req.body).then((user) => res.json({ publicAddress: user.publicAddress, nonce: user.nonce })).catch(next);
     }
 }
 
