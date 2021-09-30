@@ -4,17 +4,6 @@ import { Login } from '../login/login';
 import { Profile } from '../profile/profile';
 import { Auth } from '../type';
 
-// import {
-// 	Button,
-// 	Divider,
-// 	Fab,
-// 	Drawer,
-// 	List,
-// 	ListItem,
-// } from '@material-ui/core';
-
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
 import '../assets/base.scss';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
@@ -303,9 +292,9 @@ export const App = (): JSX.Element => {
 				<div className="header-nav-wrapper header-nav-wrapper-lg bg-night-sky bg-composed-wrapper">
 					<div className="bg-composed-img-5 bg-composed-wrapper--image" />
 					<div className="bg-composed-wrapper--content text-light">
-						<div className="header-nav-logo">
+						{/* <div className="header-nav-logo">
 							<div className="nav-logo">
-								{/* <a
+								<a
 								href="#/"
 								onClick={e => e.preventDefault()}
 								title="Carolina React Admin Dashboard with Material-UI PRO">
@@ -313,9 +302,9 @@ export const App = (): JSX.Element => {
 									<img alt="Alexandria Decentralized-File-Upload-and-Sharing" src={projectLogo} />
 								</i>
 								<span>Alexandria</span>
-							</a> */}
+							</a>
 							</div>
-						</div>
+						</div> */}
 						<div className="header-nav-menu d-none d-lg-block">
 							<div className="d-flex justify-content-center">
 								<span className="w-100 d-flex justify-content-center pb-0">
@@ -328,9 +317,10 @@ export const App = (): JSX.Element => {
 								</span>
 							</div>
 						</div>
-						<div className="header-nav-actions flex-grow-0 flex-lg-grow-1">
+						{/* <div className="header-nav-actions flex-grow-0 flex-lg-grow-1">
 							<span className="d-none d-lg-block"> </span>
-						</div>
+							Teste
+						</div> */}
 					</div>
 				</div>
 			</Fragment>
