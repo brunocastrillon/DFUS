@@ -70,16 +70,10 @@ body {
       left: 0;
       right: 0;
       z-index: 22;
-      padding-left: $sidebar-width;
+      // padding-left: $sidebar-width;
 
     .app-content--inner__wrapper {
       padding-bottom: $footer-height;
-    }
-
-    &.app-footer--fixed__collapsed {
-      @include media-breakpoint-up(lg) {
-        padding-left: $sidebar-width-collapsed / 8;
-      }
     }
   }
 }

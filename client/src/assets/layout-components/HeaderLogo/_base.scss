@@ -3,7 +3,6 @@ body {
 
   .app-header-logo {
     height: $header-height;
-    width: $sidebar-width;
     @include media-breakpoint-down(md) {
       display: none;
     }

@@ -6,12 +6,6 @@ body {
     flex-direction: row;
   }
 
-  .app-header-collapsed-sidebar {
-    @include media-breakpoint-up(lg) {
-      padding-left: $sidebar-width-collapsed / 8;
-    }
-  }
-
   .app-header-toolbar {
     height: 100%;
     flex: 1;
