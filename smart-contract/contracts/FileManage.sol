@@ -19,7 +19,7 @@ contract FileManage {
         string memory fileContent,
         string memory fileName,
         string memory fileType,
-        uint dateTime,
+        uint dateTime
     )
         public
     {
@@ -27,7 +27,7 @@ contract FileManage {
             Content: fileContent,
             Name: fileName,
             Type: fileType,
-            DateTime: dateTime,
+            DateTime: dateTime
         }));
 
         emit fileAdded(msg.sender, fileContent);

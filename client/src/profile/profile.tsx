@@ -127,13 +127,15 @@ export const Profile = ({ auth, onLoggedOut }: Props): JSX.Element => {
             const name = file.name;
             const type = file.type;
             const reader = new FileReader();
-
+            
             reader.readAsArrayBuffer(file);
             reader.onload = async () => {
                 const arrayBuffer = reader.result;
                 const bytes = new Uint8Array(arrayBuffer as ArrayBuffer);
                 const resultIPFS = await ipfsClient.add(bytes);
                 
+                console.log(type);
+                console.log(resultIPFS);
                 // - TODO: Chamar Contrato
                 // - https://gateway.ipfs.io/ipfs/${hashIPFS}
             }
