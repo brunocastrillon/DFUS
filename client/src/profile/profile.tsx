@@ -1,15 +1,16 @@
-import './profile.css';
-
 import jwtDecode from 'jwt-decode';
-import React, { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect, Fragment, useCallback } from 'react';
 import Blockies from 'react-blockies';
 
 import { Auth } from '../type';
 
+import ipfsClient from '../middlewares/ipfs/service';
+
 import AddCircleTwoToneIcon from '@material-ui/icons/AddCircleTwoTone';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
+import EditarEmailIcon from '@material-ui/icons/UpdateTwoTone';
+import EditarNomeIcon from '@material-ui/icons/EditTwoTone';
 import {
     Grid,
     Fab,
@@ -21,41 +22,15 @@ import {
     CardContent,
     Button,
     Tooltip,
-    List, ListItem
+    List, ListItem, IconButton
 } from '@material-ui/core';
 
 import Dropzone from 'react-dropzone';
+
 import MuiAlert from '@material-ui/lab/Alert';
 
-import svgImage1 from '../assets/images/illustrations/404.svg';
-import svgImage2 from '../assets/images/illustrations/500.svg';
-import svgImage3 from '../assets/images/illustrations/505.svg';
-import svgImage4 from '../assets/images/illustrations/account.svg';
-import svgImage5 from '../assets/images/illustrations/best_place.svg';
-import svgImage6 from '../assets/images/illustrations/business_plan.svg';
-import svgImage7 from '../assets/images/illustrations/businesswoman.svg';
-import svgImage8 from '../assets/images/illustrations/data_points.svg';
-import svgImage9 from '../assets/images/illustrations/experience_design.svg';
-import svgImage10 from '../assets/images/illustrations/form-widgets.svg';
-import svgImage11 from '../assets/images/illustrations/image_post.svg';
-import svgImage12 from '../assets/images/illustrations/login.svg';
-import svgImage13 from '../assets/images/illustrations/maps.svg';
-import svgImage14 from '../assets/images/illustrations/modern_professional.svg';
-import svgImage15 from '../assets/images/illustrations/monitor.svg';
-import svgImage16 from '../assets/images/illustrations/note_list.svg';
-import svgImage17 from '../assets/images/illustrations/personal_settings.svg';
-import svgImage18 from '../assets/images/illustrations/posting_photo.svg';
-import svgImage19 from '../assets/images/illustrations/powerful.svg';
 import svgImage20 from '../assets/images/illustrations/presentation-blocks.svg';
 import svgImage21 from '../assets/images/illustrations/process.svg';
-import svgImage22 from '../assets/images/illustrations/projections.svg';
-import svgImage23 from '../assets/images/illustrations/reading.svg';
-import svgImage24 from '../assets/images/illustrations/monitor.svg';
-import svgImage25 from '../assets/images/illustrations/social_share.svg';
-import svgImage26 from '../assets/images/illustrations/tables.svg';
-import svgImage27 from '../assets/images/illustrations/travel_booking.svg';
-import svgImage28 from '../assets/images/illustrations/tree_swing.svg';
-import svgImage29 from '../assets/images/illustrations/ui-elements.svg';
 
 interface Props {
     auth: Auth;
@@ -79,7 +54,6 @@ interface JwtDecoded {
 }
 
 export const Profile = ({ auth, onLoggedOut }: Props): JSX.Element => {
-    const [valueTab, setValueTab] = React.useState(0);
     const [state, setState] = useState<State>({
         loading: false,
         user: undefined,
@@ -148,9 +122,31 @@ export const Profile = ({ auth, onLoggedOut }: Props): JSX.Element => {
 
     const username = user && user.username;
 
-    const handleTabChange = (newValue: any) => {
-        setValueTab(newValue);
-    };
+    const onFileDrop = useCallback((acceptedFiles: Blob[]) => {
+        acceptedFiles.forEach((file: Blob) => {
+            var reader = new FileReader()
+            reader.readAsArrayBuffer(file);
+
+            reader.onload = async () => {
+                var arrayBuffer = reader.result;
+                var bytes = new Uint8Array(arrayBuffer as ArrayBuffer);
+                console.log(bytes);
+
+                const resultIPFS = await ipfsClient.add(bytes);
+
+                console.log(resultIPFS);
+
+                // let fileHash = resultIPFS[0].hash;
+            }
+
+            reader.onabort = () => console.log('file reading was aborted')
+            reader.onerror = () => console.log('file reading has failed')
+        })
+    }, []);
+
+    const onFileCancel = async () => {
+
+    }
 
     return (
         <Fragment>
@@ -179,12 +175,15 @@ export const Profile = ({ auth, onLoggedOut }: Props): JSX.Element => {
                                             />
                                         </span>
                                     </Button>
-                                </Tooltip>                                
-                            </div>                            
+                                </Tooltip>
+                            </div>
                         </div>
                         <div className="font-weight-bold font-size-lg d-flex align-items-center mt-2 mb-0">
                             <span>
                                 {username ? <pre>{username}</pre> : 'nome não cadastrado'}{' '}
+                                <IconButton aria-label="delete" className="text-white" size="small" disabled={false} title="editar">
+                                    <EditarNomeIcon fontSize="small" />
+                                </IconButton>
                             </span>
                         </div>
                         <p className="mb-4 font-size-md text-white-50">
@@ -250,7 +249,7 @@ export const Profile = ({ auth, onLoggedOut }: Props): JSX.Element => {
                                             href="#/"
                                             onClick={e => e.preventDefault()}
                                             className="text-white">
-                                             0x5ed97ed5b61cf820420f853eaa3bdb24aea0e5cb
+                                            0x5ed97ed5b61cf820420f853eaa3bdb24aea0e5cb
                                         </a>
                                         <small className="d-block text-white-50">
                                             (Adella Galen)
@@ -440,8 +439,8 @@ export const Profile = ({ auth, onLoggedOut }: Props): JSX.Element => {
 
                                     <div className="dropzone">
                                         <Dropzone
-                                        // onDrop={this.onDrop.bind(this)}
-                                        // onFileDialogCancel={this.onCancel.bind(this)}
+                                            onDrop={onFileDrop.bind(this)}
+                                            onFileDialogCancel={onFileCancel.bind(this)}
                                         >
                                             {({ getRootProps, getInputProps }) => (
                                                 <div {...getRootProps()}>
@@ -874,7 +873,7 @@ export const Profile = ({ auth, onLoggedOut }: Props): JSX.Element => {
                 </Grid>
             </Grid>
 
-            <div className="Profile">
+            {/* <div className="Profile">
                 <div>
                     <label htmlFor="username">Change username: </label>
                     <input name="username" onChange={handleChange} />
@@ -882,7 +881,7 @@ export const Profile = ({ auth, onLoggedOut }: Props): JSX.Element => {
                         Submit
                     </button>
                 </div>
-            </div>
+            </div> */}
         </Fragment>
     );
 };
