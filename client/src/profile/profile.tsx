@@ -123,20 +123,19 @@ export const Profile = ({ auth, onLoggedOut }: Props): JSX.Element => {
     const username = user && user.username;
 
     const onFileDrop = useCallback((acceptedFiles: Blob[]) => {
-        acceptedFiles.forEach((file: Blob) => {
-            var reader = new FileReader()
+        acceptedFiles.forEach((file: any) => {
+            const name = file.name;
+            const type = file.type;
+            const reader = new FileReader();
+
             reader.readAsArrayBuffer(file);
-
             reader.onload = async () => {
-                var arrayBuffer = reader.result;
-                var bytes = new Uint8Array(arrayBuffer as ArrayBuffer);
-                console.log(bytes);
-
+                const arrayBuffer = reader.result;
+                const bytes = new Uint8Array(arrayBuffer as ArrayBuffer);
                 const resultIPFS = await ipfsClient.add(bytes);
-
-                console.log(resultIPFS);
-
-                // let fileHash = resultIPFS[0].hash;
+                
+                // - TODO: Chamar Contrato
+                // - https://gateway.ipfs.io/ipfs/${hashIPFS}
             }
 
             reader.onabort = () => console.log('file reading was aborted')
