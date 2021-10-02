@@ -6,23 +6,17 @@ import { Auth } from '../type';
 
 import ipfsClient from '../middlewares/ipfs/service';
 
-import AddCircleTwoToneIcon from '@material-ui/icons/AddCircleTwoTone';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import EditarEmailIcon from '@material-ui/icons/UpdateTwoTone';
 import EditarNomeIcon from '@material-ui/icons/EditTwoTone';
+
 import {
     Grid,
-    Fab,
-    Box,
-    Typography,
-    Tabs,
-    Tab,
     Card,
     CardContent,
     Button,
     Tooltip,
-    List, ListItem, IconButton
+    IconButton
 } from '@material-ui/core';
 
 import Dropzone from 'react-dropzone';
@@ -31,6 +25,10 @@ import MuiAlert from '@material-ui/lab/Alert';
 
 import svgImage20 from '../assets/images/illustrations/presentation-blocks.svg';
 import svgImage21 from '../assets/images/illustrations/process.svg';
+
+import { getContractDeployed } from '../middlewares/blockchain/service';
+
+declare const window: any;
 
 interface Props {
     auth: Auth;
@@ -54,6 +52,7 @@ interface JwtDecoded {
 }
 
 export const Profile = ({ auth, onLoggedOut }: Props): JSX.Element => {
+
     const [state, setState] = useState<State>({
         loading: false,
         user: undefined,
@@ -122,26 +121,40 @@ export const Profile = ({ auth, onLoggedOut }: Props): JSX.Element => {
 
     const username = user && user.username;
 
+    const handleIPFS = async (fileReaderResult: any) => {
+        const bytes = new Uint8Array(fileReaderResult as ArrayBuffer);
+        const fileIPFS = await ipfsClient.add(bytes);
+
+        return fileIPFS;
+    };
+
+    const handleBlockchain = async (fileIPFS: any, fileName: any, fileType: any) => {
+        const ethereum = window.ethereum;
+        const enderecoEnthereum = ethereum._state.accounts > 0 ? ethereum._state.accounts[0] : "";
+        const fileManage = await getContractDeployed();
+        const fileDateTime = (new Date()).getTime();
+
+        await fileManage.methods.add(fileIPFS, fileName, fileType, fileDateTime).send({ from: enderecoEnthereum, gasPrice: 20e9 })
+            .on('receipt', (result: any) => {
+                console.log(result.events.fileAdded);
+                console.log(`https://gateway.ipfs.io/ipfs/${fileIPFS}`);
+            })
+            .on('error', (error: any) => {
+                console.log(error);
+            });
+    }
+
     const onFileDrop = useCallback((acceptedFiles: Blob[]) => {
         acceptedFiles.forEach((file: any) => {
-            const name = file.name;
-            const type = file.type;
-            const reader = new FileReader();
-            
-            reader.readAsArrayBuffer(file);
-            reader.onload = async () => {
-                const arrayBuffer = reader.result;
-                const bytes = new Uint8Array(arrayBuffer as ArrayBuffer);
-                const resultIPFS = await ipfsClient.add(bytes);
-                
-                console.log(type);
-                console.log(resultIPFS);
-                // - TODO: Chamar Contrato
-                // - https://gateway.ipfs.io/ipfs/${hashIPFS}
-            }
+            const filereader = new FileReader();
 
-            reader.onabort = () => console.log('file reading was aborted')
-            reader.onerror = () => console.log('file reading has failed')
+            filereader.onabort = () => console.log('file reading was aborted');
+            filereader.onerror = () => console.log('file reading has failed');
+            filereader.readAsArrayBuffer(file);
+            filereader.onload = async () => {
+                const fileIPFS = await handleIPFS(filereader.result);
+                handleBlockchain(fileIPFS.path, file.name, file.type);
+            };
         })
     }, []);
 

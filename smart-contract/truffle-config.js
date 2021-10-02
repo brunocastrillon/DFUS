@@ -3,7 +3,7 @@ require("ts-node").register({
 });
 
 module.exports = {
-  //contracts_build_directory: "../client/src/middlewares/blockchain/contracts",
+  contracts_build_directory: "../client/src/middlewares/blockchain/contracts",
   networks: {
     development: {
       host: "127.0.0.1",
