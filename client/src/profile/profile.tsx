@@ -1,5 +1,5 @@
 import jwtDecode from 'jwt-decode';
-import React, { useState, useEffect, Fragment, useCallback } from 'react';
+import React, { useState, useEffect, Fragment, useCallback, useLayoutEffect } from 'react';
 import Blockies from 'react-blockies';
 
 import { Auth } from '../type';
@@ -42,6 +42,7 @@ interface State {
         username: string;
     };
     username: string;
+    files: [];
 }
 
 interface JwtDecoded {
@@ -57,9 +58,11 @@ export const Profile = ({ auth, onLoggedOut }: Props): JSX.Element => {
         loading: false,
         user: undefined,
         username: '',
+        files: []
     });
 
     useEffect(() => {
+        //const { files } = state;
         const { accessToken } = auth;
         const {
             payload: { id },
@@ -70,11 +73,25 @@ export const Profile = ({ auth, onLoggedOut }: Props): JSX.Element => {
                 Authorization: `Bearer ${accessToken}`,
             },
         })
-            .then((response) => response.json())
-            .then((user) => setState({ ...state, user }))
-            .catch(window.alert);
-    }, [auth, state]);
+        .then((response) => response.json())
+        .then((user) => setState({ ...state, user }))
+        .then(async () => await handleListBlockChain())
+        .then((files:any) => setState({ ...state, files }))
+        .catch(window.alert);
 
+        // async function fetchData() {
+        //     const files:any = await handleListBlockChain();
+        //     setState({ ...state, files });
+        //     // console.log(files);
+        // }
+        // fetchData();
+        // if(files.length < 1) {
+        //     // console.log(files.length);
+        //     // console.log(files);
+        //     fetchData();
+        // }
+
+    }, [auth, state]);
 
     const handleChange = ({
         target: { value },
@@ -117,21 +134,38 @@ export const Profile = ({ auth, onLoggedOut }: Props): JSX.Element => {
         payload: { publicAddress },
     } = jwtDecode<JwtDecoded>(accessToken);
 
-    const { loading, user } = state;
+    const { loading, user, files } = state;
 
     const username = user && user.username;
 
-    const handleIPFS = async (fileReaderResult: any) => {
+    const handleListBlockChain = async () => {
+        const ethereum = window.ethereum;
+        const enderecoEnthereum = ethereum._state.accounts > 0 ? ethereum._state.accounts[0] : "";
+        const fileManage = await getContractDeployed();
+
+        let totalFiles = await fileManage.methods.total().call({ from: enderecoEnthereum });
+        let files = [];
+
+        for (let index = 0; index < totalFiles; index++) {
+            let file = await fileManage.methods.read(index).call({ from: enderecoEnthereum });
+            if (file.fileContent !== "") files.push(file);
+        }
+
+        return files;
+    }
+
+    const handleFileIPFS = async (fileReaderResult: any) => {
         const bytes = new Uint8Array(fileReaderResult as ArrayBuffer);
         const fileIPFS = await ipfsClient.add(bytes);
 
         return fileIPFS;
     };
 
-    const handleBlockchain = async (fileIPFS: any, fileName: any, fileType: any) => {
+    const handleFileBlockchain = async (fileIPFS: any, fileName: any, fileType: any) => {
         const ethereum = window.ethereum;
         const enderecoEnthereum = ethereum._state.accounts > 0 ? ethereum._state.accounts[0] : "";
         const fileManage = await getContractDeployed();
+
         const fileDateTime = (new Date()).getTime();
 
         await fileManage.methods.add(fileIPFS, fileName, fileType, fileDateTime).send({ from: enderecoEnthereum, gasPrice: 20e9 })
@@ -152,8 +186,8 @@ export const Profile = ({ auth, onLoggedOut }: Props): JSX.Element => {
             filereader.onerror = () => console.log('file reading has failed');
             filereader.readAsArrayBuffer(file);
             filereader.onload = async () => {
-                const fileIPFS = await handleIPFS(filereader.result);
-                handleBlockchain(fileIPFS.path, file.name, file.type);
+                const fileIPFS = await handleFileIPFS(filereader.result);
+                handleFileBlockchain(fileIPFS.path, file.name, file.type);
             };
         })
     }, []);
@@ -406,14 +440,14 @@ export const Profile = ({ auth, onLoggedOut }: Props): JSX.Element => {
                     <div className="bg-night-sky p-3 rounded text-white h-90">
                         <Card className="card-box p-4 mb-4">
                             <div className="d-flex justify-content-between">
-                                <Grid>
+                                {/* <Grid>
                                     <Grid>
 
                                     </Grid>
                                     <Grid>
 
                                     </Grid>
-                                </Grid>
+                                </Grid> */}
                                 <div className="pr-3">
                                     <h4 className="font-size-xl font-weight-bold mb-2 mt-1">
                                         Bem vindo(a) a sua bibliteca descentralizada de arquivos.
@@ -435,7 +469,6 @@ export const Profile = ({ auth, onLoggedOut }: Props): JSX.Element => {
                                         </span>
                                     </Button>
                                 </div>
-
                                 <div className="w-25 d-flex align-items-center">
                                     <img alt="..." className="d-block img-fluid" src={svgImage20} />
                                 </div>
@@ -493,385 +526,30 @@ export const Profile = ({ auth, onLoggedOut }: Props): JSX.Element => {
                                                     <div className="text-center d-flex align-items-left mb-0">
                                                         <Grid container spacing={3}>
 
-                                                            <Grid item xs={4} sm={2} md={4} lg={2}>
-                                                                <a href="#/" onClick={e => e.preventDefault()}>
-                                                                    <Card className="card-box card-box-hover-rise-alt mb-0">
-                                                                        <CardContent className="p-3">
-                                                                            <div className="card-img-wrapper">
-                                                                                <div className="rounded py-3 mb-0 bg-secondary d-flex align-items-center align-content-center">
-                                                                                    <FontAwesomeIcon icon={['far', 'file-pdf']} className="display-3 text-primary mx-auto" />
-                                                                                </div>
-                                                                                <b className="small">nome-do-arquivo.pdf</b>
-                                                                                <div>
-                                                                                    <small className="opacity-6">
-                                                                                        Criado:{' '}
-                                                                                        <span className="text-black-50">26.08.2021</span>
-                                                                                    </small>
-                                                                                </div>
-                                                                            </div>
-                                                                        </CardContent>
-                                                                    </Card>
-                                                                </a>
-                                                            </Grid>
-
-                                                            <Grid item xs={4} sm={2} md={4} lg={2}>
-                                                                <a href="#/" onClick={e => e.preventDefault()}>
-                                                                    <Card className="card-box card-box-hover-rise-alt mb-0">
-                                                                        <CardContent className="p-3">
-                                                                            <div className="card-img-wrapper">
-                                                                                <div className="rounded py-3 mb-0 bg-secondary d-flex align-items-center align-content-center">
-                                                                                    <FontAwesomeIcon icon={['far', 'file-pdf']} className="display-3 text-primary mx-auto" />
-                                                                                </div>
-                                                                                <b className="small">nome-do-arquivo.pdf</b>
-                                                                                <div>
-                                                                                    <small className="opacity-6">
-                                                                                        Criado:{' '}
-                                                                                        <span className="text-black-50">26.08.2021</span>
-                                                                                    </small>
-                                                                                </div>
-                                                                            </div>
-                                                                        </CardContent>
-                                                                    </Card>
-                                                                </a>
-                                                            </Grid>
-
-                                                            <Grid item xs={4} sm={2} md={4} lg={2}>
-                                                                <a href="#/" onClick={e => e.preventDefault()}>
-                                                                    <Card className="card-box card-box-hover-rise-alt mb-0">
-                                                                        <CardContent className="p-3">
-                                                                            <div className="card-img-wrapper">
-                                                                                <div className="rounded py-3 mb-0 bg-secondary d-flex align-items-center align-content-center">
-                                                                                    <FontAwesomeIcon icon={['far', 'file-pdf']} className="display-3 text-primary mx-auto" />
-                                                                                </div>
-                                                                                <b className="small">nome-do-arquivo.pdf</b>
-                                                                                <div>
-                                                                                    <small className="opacity-6">
-                                                                                        Criado:{' '}
-                                                                                        <span className="text-black-50">26.08.2021</span>
-                                                                                    </small>
-                                                                                </div>
-                                                                            </div>
-                                                                        </CardContent>
-                                                                    </Card>
-                                                                </a>
-                                                            </Grid>
-
-                                                            <Grid item xs={4} sm={2} md={4} lg={2}>
-                                                                <a href="#/" onClick={e => e.preventDefault()}>
-                                                                    <Card className="card-box card-box-hover-rise-alt mb-0">
-                                                                        <CardContent className="p-3">
-                                                                            <div className="card-img-wrapper">
-                                                                                <div className="rounded py-3 mb-0 bg-secondary d-flex align-items-center align-content-center">
-                                                                                    <FontAwesomeIcon icon={['far', 'file-pdf']} className="display-3 text-primary mx-auto" />
-                                                                                </div>
-                                                                                <b className="small">nome-do-arquivo.pdf</b>
-                                                                                <div>
-                                                                                    <small className="opacity-6">
-                                                                                        Criado:{' '}
-                                                                                        <span className="text-black-50">26.08.2021</span>
-                                                                                    </small>
-                                                                                </div>
-                                                                            </div>
-                                                                        </CardContent>
-                                                                    </Card>
-                                                                </a>
-                                                            </Grid>
-
-                                                            <Grid item xs={4} sm={2} md={4} lg={2}>
-                                                                <a href="#/" onClick={e => e.preventDefault()}>
-                                                                    <Card className="card-box card-box-hover-rise-alt mb-0">
-                                                                        <CardContent className="p-3">
-                                                                            <div className="card-img-wrapper">
-                                                                                <div className="rounded py-3 mb-0 bg-secondary d-flex align-items-center align-content-center">
-                                                                                    <FontAwesomeIcon icon={['far', 'file-pdf']} className="display-3 text-primary mx-auto" />
-                                                                                </div>
-                                                                                <b className="small">nome-do-arquivo.pdf</b>
-                                                                                <div>
-                                                                                    <small className="opacity-6">
-                                                                                        Criado:{' '}
-                                                                                        <span className="text-black-50">26.08.2021</span>
-                                                                                    </small>
-                                                                                </div>
-                                                                            </div>
-                                                                        </CardContent>
-                                                                    </Card>
-                                                                </a>
-                                                            </Grid>
-
-                                                            <Grid item xs={4} sm={2} md={4} lg={2}>
-                                                                <a href="#/" onClick={e => e.preventDefault()}>
-                                                                    <Card className="card-box card-box-hover-rise-alt mb-0">
-                                                                        <CardContent className="p-3">
-                                                                            <div className="card-img-wrapper">
-                                                                                <div className="rounded py-3 mb-0 bg-secondary d-flex align-items-center align-content-center">
-                                                                                    <FontAwesomeIcon icon={['far', 'file-pdf']} className="display-3 text-primary mx-auto" />
-                                                                                </div>
-                                                                                <b className="small">nome-do-arquivo.pdf</b>
-                                                                                <div>
-                                                                                    <small className="opacity-6">
-                                                                                        Criado:{' '}
-                                                                                        <span className="text-black-50">26.08.2021</span>
-                                                                                    </small>
-                                                                                </div>
-                                                                            </div>
-                                                                        </CardContent>
-                                                                    </Card>
-                                                                </a>
-                                                            </Grid>
-
-
-                                                            <Grid item xs={4} sm={2} md={4} lg={2}>
-                                                                <a href="#/" onClick={e => e.preventDefault()}>
-                                                                    <Card className="card-box card-box-hover-rise-alt mb-0">
-                                                                        <CardContent className="p-3">
-                                                                            <div className="card-img-wrapper">
-                                                                                <div className="rounded py-3 mb-0 bg-secondary d-flex align-items-center align-content-center">
-                                                                                    <FontAwesomeIcon icon={['far', 'file-pdf']} className="display-3 text-primary mx-auto" />
-                                                                                </div>
-                                                                                <b className="small">nome-do-arquivo.pdf</b>
-                                                                                <div>
-                                                                                    <small className="opacity-6">
-                                                                                        Criado:{' '}
-                                                                                        <span className="text-black-50">26.08.2021</span>
-                                                                                    </small>
-                                                                                </div>
-                                                                            </div>
-                                                                        </CardContent>
-                                                                    </Card>
-                                                                </a>
-                                                            </Grid>
-
-                                                            <Grid item xs={4} sm={2} md={4} lg={2}>
-                                                                <a href="#/" onClick={e => e.preventDefault()}>
-                                                                    <Card className="card-box card-box-hover-rise-alt mb-0">
-                                                                        <CardContent className="p-3">
-                                                                            <div className="card-img-wrapper">
-                                                                                <div className="rounded py-3 mb-0 bg-secondary d-flex align-items-center align-content-center">
-                                                                                    <FontAwesomeIcon icon={['far', 'file-pdf']} className="display-3 text-primary mx-auto" />
-                                                                                </div>
-                                                                                <b className="small">nome-do-arquivo.pdf</b>
-                                                                                <div>
-                                                                                    <small className="opacity-6">
-                                                                                        Criado:{' '}
-                                                                                        <span className="text-black-50">26.08.2021</span>
-                                                                                    </small>
-                                                                                </div>
-                                                                            </div>
-                                                                        </CardContent>
-                                                                    </Card>
-                                                                </a>
-                                                            </Grid>
-
-                                                            <Grid item xs={4} sm={2} md={4} lg={2}>
-                                                                <a href="#/" onClick={e => e.preventDefault()}>
-                                                                    <Card className="card-box card-box-hover-rise-alt mb-0">
-                                                                        <CardContent className="p-3">
-                                                                            <div className="card-img-wrapper">
-                                                                                <div className="rounded py-3 mb-0 bg-secondary d-flex align-items-center align-content-center">
-                                                                                    <FontAwesomeIcon icon={['far', 'file-pdf']} className="display-3 text-primary mx-auto" />
-                                                                                </div>
-                                                                                <b className="small">nome-do-arquivo.pdf</b>
-                                                                                <div>
-                                                                                    <small className="opacity-6">
-                                                                                        Criado:{' '}
-                                                                                        <span className="text-black-50">26.08.2021</span>
-                                                                                    </small>
-                                                                                </div>
-                                                                            </div>
-                                                                        </CardContent>
-                                                                    </Card>
-                                                                </a>
-                                                            </Grid>
-
-                                                            <Grid item xs={4} sm={2} md={4} lg={2}>
-                                                                <a href="#/" onClick={e => e.preventDefault()}>
-                                                                    <Card className="card-box card-box-hover-rise-alt mb-0">
-                                                                        <CardContent className="p-3">
-                                                                            <div className="card-img-wrapper">
-                                                                                <div className="rounded py-3 mb-0 bg-secondary d-flex align-items-center align-content-center">
-                                                                                    <FontAwesomeIcon icon={['far', 'file-pdf']} className="display-3 text-primary mx-auto" />
-                                                                                </div>
-                                                                                <b className="small">nome-do-arquivo.pdf</b>
-                                                                                <div>
-                                                                                    <small className="opacity-6">
-                                                                                        Criado:{' '}
-                                                                                        <span className="text-black-50">26.08.2021</span>
-                                                                                    </small>
-                                                                                </div>
-                                                                            </div>
-                                                                        </CardContent>
-                                                                    </Card>
-                                                                </a>
-                                                            </Grid>
-
-                                                            <Grid item xs={4} sm={2} md={4} lg={2}>
-                                                                <a href="#/" onClick={e => e.preventDefault()}>
-                                                                    <Card className="card-box card-box-hover-rise-alt mb-0">
-                                                                        <CardContent className="p-3">
-                                                                            <div className="card-img-wrapper">
-                                                                                <div className="rounded py-3 mb-0 bg-secondary d-flex align-items-center align-content-center">
-                                                                                    <FontAwesomeIcon icon={['far', 'file-pdf']} className="display-3 text-primary mx-auto" />
-                                                                                </div>
-                                                                                <b className="small">nome-do-arquivo.pdf</b>
-                                                                                <div>
-                                                                                    <small className="opacity-6">
-                                                                                        Criado:{' '}
-                                                                                        <span className="text-black-50">26.08.2021</span>
-                                                                                    </small>
-                                                                                </div>
-                                                                            </div>
-                                                                        </CardContent>
-                                                                    </Card>
-                                                                </a>
-                                                            </Grid>
-
-                                                            <Grid item xs={4} sm={2} md={4} lg={2}>
-                                                                <a href="#/" onClick={e => e.preventDefault()}>
-                                                                    <Card className="card-box card-box-hover-rise-alt mb-0">
-                                                                        <CardContent className="p-3">
-                                                                            <div className="card-img-wrapper">
-                                                                                <div className="rounded py-3 mb-0 bg-secondary d-flex align-items-center align-content-center">
-                                                                                    <FontAwesomeIcon icon={['far', 'file-pdf']} className="display-3 text-primary mx-auto" />
-                                                                                </div>
-                                                                                <b className="small">nome-do-arquivo.pdf</b>
-                                                                                <div>
-                                                                                    <small className="opacity-6">
-                                                                                        Criado:{' '}
-                                                                                        <span className="text-black-50">26.08.2021</span>
-                                                                                    </small>
-                                                                                </div>
-                                                                            </div>
-                                                                        </CardContent>
-                                                                    </Card>
-                                                                </a>
-                                                            </Grid>
-
-
-                                                            <Grid item xs={4} sm={2} md={4} lg={2}>
-                                                                <a href="#/" onClick={e => e.preventDefault()}>
-                                                                    <Card className="card-box card-box-hover-rise-alt mb-0">
-                                                                        <CardContent className="p-3">
-                                                                            <div className="card-img-wrapper">
-                                                                                <div className="rounded py-3 mb-0 bg-secondary d-flex align-items-center align-content-center">
-                                                                                    <FontAwesomeIcon icon={['far', 'file-pdf']} className="display-3 text-primary mx-auto" />
-                                                                                </div>
-                                                                                <b className="small">nome-do-arquivo.pdf</b>
-                                                                                <div>
-                                                                                    <small className="opacity-6">
-                                                                                        Criado:{' '}
-                                                                                        <span className="text-black-50">26.08.2021</span>
-                                                                                    </small>
-                                                                                </div>
-                                                                            </div>
-                                                                        </CardContent>
-                                                                    </Card>
-                                                                </a>
-                                                            </Grid>
-
-                                                            <Grid item xs={4} sm={2} md={4} lg={2}>
-                                                                <a href="#/" onClick={e => e.preventDefault()}>
-                                                                    <Card className="card-box card-box-hover-rise-alt mb-0">
-                                                                        <CardContent className="p-3">
-                                                                            <div className="card-img-wrapper">
-                                                                                <div className="rounded py-3 mb-0 bg-secondary d-flex align-items-center align-content-center">
-                                                                                    <FontAwesomeIcon icon={['far', 'file-pdf']} className="display-3 text-primary mx-auto" />
-                                                                                </div>
-                                                                                <b className="small">nome-do-arquivo.pdf</b>
-                                                                                <div>
-                                                                                    <small className="opacity-6">
-                                                                                        Criado:{' '}
-                                                                                        <span className="text-black-50">26.08.2021</span>
-                                                                                    </small>
-                                                                                </div>
-                                                                            </div>
-                                                                        </CardContent>
-                                                                    </Card>
-                                                                </a>
-                                                            </Grid>
-
-                                                            <Grid item xs={4} sm={2} md={4} lg={2}>
-                                                                <a href="#/" onClick={e => e.preventDefault()}>
-                                                                    <Card className="card-box card-box-hover-rise-alt mb-0">
-                                                                        <CardContent className="p-3">
-                                                                            <div className="card-img-wrapper">
-                                                                                <div className="rounded py-3 mb-0 bg-secondary d-flex align-items-center align-content-center">
-                                                                                    <FontAwesomeIcon icon={['far', 'file-pdf']} className="display-3 text-primary mx-auto" />
-                                                                                </div>
-                                                                                <b className="small">nome-do-arquivo.pdf</b>
-                                                                                <div>
-                                                                                    <small className="opacity-6">
-                                                                                        Criado:{' '}
-                                                                                        <span className="text-black-50">26.08.2021</span>
-                                                                                    </small>
-                                                                                </div>
-                                                                            </div>
-                                                                        </CardContent>
-                                                                    </Card>
-                                                                </a>
-                                                            </Grid>
-
-                                                            <Grid item xs={4} sm={2} md={4} lg={2}>
-                                                                <a href="#/" onClick={e => e.preventDefault()}>
-                                                                    <Card className="card-box card-box-hover-rise-alt mb-0">
-                                                                        <CardContent className="p-3">
-                                                                            <div className="card-img-wrapper">
-                                                                                <div className="rounded py-3 mb-0 bg-secondary d-flex align-items-center align-content-center">
-                                                                                    <FontAwesomeIcon icon={['far', 'file-pdf']} className="display-3 text-primary mx-auto" />
-                                                                                </div>
-                                                                                <b className="small">nome-do-arquivo.pdf</b>
-                                                                                <div>
-                                                                                    <small className="opacity-6">
-                                                                                        Criado:{' '}
-                                                                                        <span className="text-black-50">26.08.2021</span>
-                                                                                    </small>
-                                                                                </div>
-                                                                            </div>
-                                                                        </CardContent>
-                                                                    </Card>
-                                                                </a>
-                                                            </Grid>
-
-                                                            <Grid item xs={4} sm={2} md={4} lg={2}>
-                                                                <a href="#/" onClick={e => e.preventDefault()}>
-                                                                    <Card className="card-box card-box-hover-rise-alt mb-0">
-                                                                        <CardContent className="p-3">
-                                                                            <div className="card-img-wrapper">
-                                                                                <div className="rounded py-3 mb-0 bg-secondary d-flex align-items-center align-content-center">
-                                                                                    <FontAwesomeIcon icon={['far', 'file-pdf']} className="display-3 text-primary mx-auto" />
-                                                                                </div>
-                                                                                <b className="small">nome-do-arquivo.pdf</b>
-                                                                                <div>
-                                                                                    <small className="opacity-6">
-                                                                                        Criado:{' '}
-                                                                                        <span className="text-black-50">26.08.2021</span>
-                                                                                    </small>
-                                                                                </div>
-                                                                            </div>
-                                                                        </CardContent>
-                                                                    </Card>
-                                                                </a>
-                                                            </Grid>
-
-                                                            <Grid item xs={4} sm={2} md={4} lg={2}>
-                                                                <a href="#/" onClick={e => e.preventDefault()}>
-                                                                    <Card className="card-box card-box-hover-rise-alt mb-0">
-                                                                        <CardContent className="p-3">
-                                                                            <div className="card-img-wrapper">
-                                                                                <div className="rounded py-3 mb-0 bg-secondary d-flex align-items-center align-content-center">
-                                                                                    <FontAwesomeIcon icon={['far', 'file-pdf']} className="display-3 text-primary mx-auto" />
-                                                                                </div>
-                                                                                <b className="small">nome-do-arquivo.pdf</b>
-                                                                                <div>
-                                                                                    <small className="opacity-6">
-                                                                                        Criado:{' '}
-                                                                                        <span className="text-black-50">26.08.2021</span>
-                                                                                    </small>
-                                                                                </div>
-                                                                            </div>
-                                                                        </CardContent>
-                                                                    </Card>
-                                                                </a>
-                                                            </Grid>
+                                                            {
+                                                                files.map((file: { fileName: string; fileContent: string; }) => ( // files.map((file: { fileName: boolean | React.ReactChild | React.ReactFragment | React.ReactPortal | null | undefined; }) => (
+                                                                    <Grid item xs={4} sm={2} md={4} lg={2}>
+                                                                        <a href={`https://gateway.ipfs.io/ipfs/${file.fileContent}`} target={'_blank'} rel="noreferrer"> {/* <a href={`https://gateway.ipfs.io/ipfs/${file.fileContent}`} onClick={e => e.preventDefault()}> */}
+                                                                            <Card className="card-box card-box-hover-rise-alt mb-0">
+                                                                                <CardContent className="p-3">
+                                                                                    <div className="card-img-wrapper">
+                                                                                        <div className="rounded py-3 mb-0 bg-secondary d-flex align-items-center align-content-center">
+                                                                                            <FontAwesomeIcon icon={['far', 'file-pdf']} className="display-3 text-primary mx-auto" />
+                                                                                        </div>
+                                                                                        <b className="small">{file.fileName}</b>
+                                                                                        <div>
+                                                                                            <small className="opacity-6">
+                                                                                                Criado:{' '}
+                                                                                                <span className="text-black-50">26.08.2021</span>
+                                                                                            </small>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </CardContent>
+                                                                            </Card>
+                                                                        </a>
+                                                                    </Grid>                                                                    
+                                                                ))
+                                                            }
 
                                                         </Grid>
                                                     </div>
