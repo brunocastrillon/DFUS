@@ -34,8 +34,9 @@ import svgImage20 from '../assets/images/illustrations/presentation-blocks.svg';
 import svgImage21 from '../assets/images/illustrations/process.svg';
 
 import { getContractDeployed } from '../middlewares/blockchain/service';
+import TimestampFormatter from '../utils';
 
-import TimestampFormatter from '../utils/TimeStampFormatter';
+// import TimestampFormatter from '../utils/TimestampFormatter';
 
 declare const window: any;
 
