@@ -1,5 +1,12 @@
+import React, {
+    useState,
+    useEffect,
+    Fragment,
+    useCallback
+} from 'react';
+
 import jwtDecode from 'jwt-decode';
-import React, { useState, useEffect, Fragment, useCallback, useLayoutEffect } from 'react';
+
 import Blockies from 'react-blockies';
 
 import { Auth } from '../type';
@@ -27,6 +34,8 @@ import svgImage20 from '../assets/images/illustrations/presentation-blocks.svg';
 import svgImage21 from '../assets/images/illustrations/process.svg';
 
 import { getContractDeployed } from '../middlewares/blockchain/service';
+
+import TimestampFormatter from '../utils/TimeStampFormatter';
 
 declare const window: any;
 
@@ -62,7 +71,6 @@ export const Profile = ({ auth, onLoggedOut }: Props): JSX.Element => {
     });
 
     useEffect(() => {
-        //const { files } = state;
         const { accessToken } = auth;
         const {
             payload: { id },
@@ -73,25 +81,17 @@ export const Profile = ({ auth, onLoggedOut }: Props): JSX.Element => {
                 Authorization: `Bearer ${accessToken}`,
             },
         })
-        .then((response) => response.json())
-        .then((user) => setState({ ...state, user }))
-        .then(async () => await handleListBlockChain())
-        .then((files:any) => setState({ ...state, files }))
-        .catch(window.alert);
+            .then((response) => response.json())
+            .then((user) => setState({ ...state, user }))
+            .catch(window.alert);
 
-        // async function fetchData() {
-        //     const files:any = await handleListBlockChain();
-        //     setState({ ...state, files });
-        //     // console.log(files);
-        // }
-        // fetchData();
-        // if(files.length < 1) {
-        //     // console.log(files.length);
-        //     // console.log(files);
-        //     fetchData();
-        // }
+        async function fetchData() {
+            await handleListBlockChain();
+        }
+        fetchData();
 
-    }, [auth, state]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const handleChange = ({
         target: { value },
@@ -144,13 +144,15 @@ export const Profile = ({ auth, onLoggedOut }: Props): JSX.Element => {
         const fileManage = await getContractDeployed();
 
         let totalFiles = await fileManage.methods.total().call({ from: enderecoEnthereum });
-        let files = [];
+        let listFiles = [];
 
         for (let index = 0; index < totalFiles; index++) {
             let file = await fileManage.methods.read(index).call({ from: enderecoEnthereum });
-            if (file.fileContent !== "") files.push(file);
+            if (file.fileContent !== "") listFiles.push(file);
         }
 
+        const files: any = listFiles;
+        setState({ ...state, files });
         return files;
     }
 
@@ -169,9 +171,10 @@ export const Profile = ({ auth, onLoggedOut }: Props): JSX.Element => {
         const fileDateTime = (new Date()).getTime();
 
         await fileManage.methods.add(fileIPFS, fileName, fileType, fileDateTime).send({ from: enderecoEnthereum, gasPrice: 20e9 })
-            .on('receipt', (result: any) => {
-                console.log(result.events.fileAdded);
-                console.log(`https://gateway.ipfs.io/ipfs/${fileIPFS}`);
+            .on('receipt', async (result: any) => {
+                // console.log(result.events.fileAdded);
+                // console.log(`https://gateway.ipfs.io/ipfs/${fileIPFS}`);
+                await handleListBlockChain();
             })
             .on('error', (error: any) => {
                 console.log(error);
@@ -527,27 +530,31 @@ export const Profile = ({ auth, onLoggedOut }: Props): JSX.Element => {
                                                         <Grid container spacing={3}>
 
                                                             {
-                                                                files.map((file: { fileName: string; fileContent: string; }) => ( // files.map((file: { fileName: boolean | React.ReactChild | React.ReactFragment | React.ReactPortal | null | undefined; }) => (
-                                                                    <Grid item xs={4} sm={2} md={4} lg={2}>
-                                                                        <a href={`https://gateway.ipfs.io/ipfs/${file.fileContent}`} target={'_blank'} rel="noreferrer"> {/* <a href={`https://gateway.ipfs.io/ipfs/${file.fileContent}`} onClick={e => e.preventDefault()}> */}
+                                                                files.map((file: { fileName: string; fileContent: string; dateTime: number;}, index) => (
+                                                                    <Grid item xs={4} sm={2} md={4} lg={2} key={index}>
+                                                                        <a href={`https://gateway.ipfs.io/ipfs/${file.fileContent}`} target={'_blank'} rel="noreferrer">
                                                                             <Card className="card-box card-box-hover-rise-alt mb-0">
                                                                                 <CardContent className="p-3">
                                                                                     <div className="card-img-wrapper">
                                                                                         <div className="rounded py-3 mb-0 bg-secondary d-flex align-items-center align-content-center">
                                                                                             <FontAwesomeIcon icon={['far', 'file-pdf']} className="display-3 text-primary mx-auto" />
                                                                                         </div>
-                                                                                        <b className="small">{file.fileName}</b>
+                                                                                        <b className="small">
+                                                                                            {file.fileName}
+                                                                                        </b>
                                                                                         <div>
                                                                                             <small className="opacity-6">
                                                                                                 Criado:{' '}
-                                                                                                <span className="text-black-50">26.08.2021</span>
+                                                                                                <span className="text-black-50">
+                                                                                                    { TimestampFormatter(file.dateTime) }
+                                                                                                    </span>
                                                                                             </small>
                                                                                         </div>
                                                                                     </div>
                                                                                 </CardContent>
                                                                             </Card>
                                                                         </a>
-                                                                    </Grid>                                                                    
+                                                                    </Grid>
                                                                 ))
                                                             }
 
