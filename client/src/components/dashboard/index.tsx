@@ -1,30 +1,31 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import BaseLogin from './base';
+import BaseDashboard from './base';
 import * as actions from '../../data/actions/auth';
 
-interface ILoginProps {
+interface IDashboardProps {
     logged: any;
     history: any;
     getLoggedInUser: any;
 }
 
-interface ILoginState {
+interface IDashboardState {
+
 }
 
-const Login = (Component: any) => {
-    class LoginComponent extends React.Component<ILoginProps, ILoginState> {
+const Dashboard = (Component: any) => {
+    class DashboardComponent extends React.Component<IDashboardProps, IDashboardState> {
         componentDidMount() {
             const { logged, history, getLoggedInUser } = this.props;
             getLoggedInUser();
-            if (logged) return history.replace("/dashboard");
-        }
+            if (!logged) return history.replace("/");
+        }        
 
         render() {
             return (
-                <BaseLogin>
+                <BaseDashboard>
                     <Component {...this.props} />
-                </BaseLogin>
+                </BaseDashboard>
             )
         }
     }
@@ -34,7 +35,7 @@ const Login = (Component: any) => {
         loggedInUser: state.auth.loggedInUser
     });
 
-    return connect(mapStateToProps, actions)(LoginComponent);
+    return connect(mapStateToProps, actions)(DashboardComponent);
 }
 
-export default Login;
+export default Dashboard;

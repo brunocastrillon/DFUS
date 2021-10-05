@@ -1,6 +1,6 @@
 import React from 'react';
 
-class BaseDashboard extends React.Component {
+class BaseLogin extends React.Component {
     render() {
         return (
             <div>
@@ -10,4 +10,4 @@ class BaseDashboard extends React.Component {
     }
 }
 
-export default BaseDashboard;
+export default BaseLogin;
