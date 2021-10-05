@@ -1,6 +1,6 @@
 import React, { useEffect, useState, Fragment } from 'react';
 
-import { Login } from '../login/login';
+// import { Login } from '../pages/login';
 import { Profile } from '../profile/profile';
 import { Auth } from '../type';
 
@@ -326,11 +326,11 @@ export const App = (): JSX.Element => {
 			</Fragment>
 
 			<div className="App-intro">
-				{auth ? (
+				{/* {auth ? (
 					<Profile auth={auth} onLoggedOut={handleLoggedOut} />
 				) : (
 					<Login onLoggedIn={handleLoggedIn} />
-				)}
+				)} */}
 			</div>
 		</div>
 	);
