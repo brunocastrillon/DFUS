@@ -1,6 +1,8 @@
 import React, { useEffect, useState, Fragment } from 'react';
 
-import { Login } from '../login/login';
+import Routes from '../routes';
+
+// import { Login } from '../pages/login';
 import { Profile } from '../profile/profile';
 import { Auth } from '../type';
 
@@ -258,80 +260,86 @@ library.add(
 	faLink
 );
 
-const LS_KEY = 'login-with-metamask:auth';
-
-interface State {
-	auth?: Auth;
+function App() {
+	return <Routes />
 }
 
-export const App = (): JSX.Element => {
-	const [state, setState] = useState<State>({});
+export default App;
 
-	useEffect(() => {
-		// Access token is stored in localstorage
-		const ls = window.localStorage.getItem(LS_KEY);
-		const auth = ls && JSON.parse(ls);
-		setState({ auth });
-	}, []);
+// const LS_KEY = 'login-with-metamask:auth';
 
-	const handleLoggedIn = (auth: Auth) => {
-		localStorage.setItem(LS_KEY, JSON.stringify(auth));
-		setState({ auth });
-	};
+// interface State {
+// 	auth?: Auth;
+// }
 
-	const handleLoggedOut = () => {
-		localStorage.removeItem(LS_KEY);
-		setState({ auth: undefined });
-	};
+// export const App = (): JSX.Element => {
+// 	const [state, setState] = useState<State>({});
 
-	const { auth } = state;
+// 	useEffect(() => {
+// 		// Access token is stored in localstorage
+// 		const ls = window.localStorage.getItem(LS_KEY);
+// 		const auth = ls && JSON.parse(ls);
+// 		setState({ auth });
+// 	}, []);
 
-	return (
-		<div className="App">
-			<Fragment>
-				<div className="header-nav-wrapper header-nav-wrapper-lg bg-night-sky bg-composed-wrapper">
-					<div className="bg-composed-img-5 bg-composed-wrapper--image" />
-					<div className="bg-composed-wrapper--content text-light">
-						{/* <div className="header-nav-logo">
-							<div className="nav-logo">
-								<a
-								href="#/"
-								onClick={e => e.preventDefault()}
-								title="Carolina React Admin Dashboard with Material-UI PRO">
-								<i className="bg-white">
-									<img alt="Alexandria Decentralized-File-Upload-and-Sharing" src={projectLogo} />
-								</i>
-								<span>Alexandria</span>
-							</a>
-							</div>
-						</div> */}
-						<div className="header-nav-menu d-none d-lg-block">
-							<div className="d-flex justify-content-center">
-								<span className="w-100 d-flex justify-content-center pb-0">
-									<h1 className="display-3 text-center mb-3 mt-3 font-weight-bold text-white">
-										Alexandria
-									</h1>
-									{/* <p className="font-size-lg text-center mb-0 text-white-50">
-										Sua biblioteca de documentos descentralizada
-									</p> */}
-								</span>
-							</div>
-						</div>
-						{/* <div className="header-nav-actions flex-grow-0 flex-lg-grow-1">
-							<span className="d-none d-lg-block"> </span>
-							Teste
-						</div> */}
-					</div>
-				</div>
-			</Fragment>
+// 	const handleLoggedIn = (auth: Auth) => {
+// 		localStorage.setItem(LS_KEY, JSON.stringify(auth));
+// 		setState({ auth });
+// 	};
 
-			<div className="App-intro">
-				{auth ? (
-					<Profile auth={auth} onLoggedOut={handleLoggedOut} />
-				) : (
-					<Login onLoggedIn={handleLoggedIn} />
-				)}
-			</div>
-		</div>
-	);
-};
+// 	const handleLoggedOut = () => {
+// 		localStorage.removeItem(LS_KEY);
+// 		setState({ auth: undefined });
+// 	};
+
+// 	const { auth } = state;
+
+// 	return (
+// 		<div className="App">
+// 			<Fragment>
+// 				<div className="header-nav-wrapper header-nav-wrapper-lg bg-night-sky bg-composed-wrapper">
+// 					<div className="bg-composed-img-5 bg-composed-wrapper--image" />
+// 					<div className="bg-composed-wrapper--content text-light">
+// 						{/* <div className="header-nav-logo">
+// 							<div className="nav-logo">
+// 								<a
+// 								href="#/"
+// 								onClick={e => e.preventDefault()}
+// 								title="Carolina React Admin Dashboard with Material-UI PRO">
+// 								<i className="bg-white">
+// 									<img alt="Alexandria Decentralized-File-Upload-and-Sharing" src={projectLogo} />
+// 								</i>
+// 								<span>Alexandria</span>
+// 							</a>
+// 							</div>
+// 						</div> */}
+// 						<div className="header-nav-menu d-none d-lg-block">
+// 							<div className="d-flex justify-content-center">
+// 								<span className="w-100 d-flex justify-content-center pb-0">
+// 									<h1 className="display-3 text-center mb-3 mt-3 font-weight-bold text-white">
+// 										Alexandria
+// 									</h1>
+// 									{/* <p className="font-size-lg text-center mb-0 text-white-50">
+// 										Sua biblioteca de documentos descentralizada
+// 									</p> */}
+// 								</span>
+// 							</div>
+// 						</div>
+// 						{/* <div className="header-nav-actions flex-grow-0 flex-lg-grow-1">
+// 							<span className="d-none d-lg-block"> </span>
+// 							Teste
+// 						</div> */}
+// 					</div>
+// 				</div>
+// 			</Fragment>
+
+// 			<div className="App-intro">
+// 				{/* {auth ? (
+// 					<Profile auth={auth} onLoggedOut={handleLoggedOut} />
+// 				) : (
+// 					<Login onLoggedIn={handleLoggedIn} />
+// 				)} */}
+// 			</div>
+// 		</div>
+// 	);
+// };

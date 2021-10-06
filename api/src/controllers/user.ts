@@ -1,17 +1,23 @@
-import { NextFunction, Request, Response } from 'express';
+import {
+    NextFunction,
+    Request,
+    Response
+} from 'express';
 import UserService from '../services/user';
 
 class UserController {
-    public async find(req: Request, res: Response, next: NextFunction) {
-        return UserService.list().then((users) => res.json({ users: users })).catch(next);
-    }
+    public async toAuth(req: Request, res: Response, next: NextFunction) {
+        const { publicAddress } = req.body;
+        let user = await UserService.getByAddress(publicAddress);
+        
+        if (!user) {
+            user = await UserService.create(req.body);
+        }
 
-    public async show(req: Request, res: Response, next: NextFunction) {
-        return await UserService.getByAddress(req.params.publicAddress).then((user) => res.json({ user: user })).catch(next);
-    }
-
-    public async store(req: Request, res: Response, next: NextFunction) {
-        return await UserService.create(req.body).then((user) => res.json({ publicAddress: user.publicAddress, nonce: user.nonce })).catch(next);
+        return res.json({
+            publicAddress: user.publicAddress,
+            nonce: user.nonce
+        });
     }
 }
 

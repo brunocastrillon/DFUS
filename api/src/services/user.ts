@@ -1,22 +1,9 @@
 import UserModel from '../models/user';
 
 class UserService {
-    public async list() : Promise<any> {
-        return await UserModel.find({}).then((users: any) => {
-            return users;
-        });
-    }
-
-    public async get(id: any) : Promise<any> {
-        return await UserModel.findOne({ _id: id }).then((user: any) => {
-            return user;
-        });
-    }
-
     public async getByAddress(address: any) : Promise<any> {
         return await UserModel.findOne({ publicAddress: address }, 'publicAddress nonce').then((user: any) => {
             return user;
-
         });
     }    
 
