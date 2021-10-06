@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Header from "../../components/header";
+import {Header, Footer} from "../../components";
 
 class BaseLogin extends React.Component {
     render() {
@@ -8,6 +8,7 @@ class BaseLogin extends React.Component {
             <div className="App">
                 <Header />
                 {this.props.children}
+                <Footer />
             </div>
         );
     }
