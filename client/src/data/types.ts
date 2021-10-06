@@ -1,5 +1,6 @@
 export const
     AUTH = 'AUTH',
+    GET_DASHBOARD = 'GET_DASHBOARD',
     LOGIN = 'LOGIN',
     LOGOUT = 'LOGOUT',
-    GET_DASHBOARD = 'GET_DASHBOARD'
+    USER = 'USER,'

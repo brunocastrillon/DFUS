@@ -3,17 +3,17 @@ import { connect } from 'react-redux';
 import BaseLogin from './base';
 import * as actions from '../../data/actions/auth';
 
-interface ILoginProps {
+interface IProps {
     logged: any;
     history: any;
     getLoggedInUser: any;
 }
 
-interface ILoginState {
+interface IState {
 }
 
 const Login = (Component: any) => {
-    class LoginComponent extends React.Component<ILoginProps, ILoginState> {
+    class LoginComponent extends React.Component<IProps, IState> {
         componentDidMount() {
             const { logged, history, getLoggedInUser } = this.props;
             getLoggedInUser();

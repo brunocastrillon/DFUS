@@ -29,8 +29,8 @@ import Dropzone from 'react-dropzone';
 
 import MuiAlert from '@material-ui/lab/Alert';
 
-import svgImage20 from '../assets/images/illustrations/presentation-blocks.svg';
-import svgImage21 from '../assets/images/illustrations/process.svg';
+import svgImage20 from '../../assets/images/illustrations/presentation-blocks.svg';
+import svgImage21 from '../../assets/images/illustrations/process.svg';
 
 import { getContractDeployed } from '../../middlewares/blockchain/service';
 import TimestampFormatter from '../../utils';
@@ -61,7 +61,7 @@ interface JwtDecoded {
     };
 }
 
-export const Profile = ({ auth, onLoggedOut }: Props): JSX.Element => {
+const Dashboard = ({ auth, onLoggedOut }: Props): JSX.Element => {
 
     const [state, setState] = useState<State>({
         loading: false,
@@ -584,3 +584,5 @@ export const Profile = ({ auth, onLoggedOut }: Props): JSX.Element => {
         </Fragment>
     );
 };
+
+export default Dashboard;

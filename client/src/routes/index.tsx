@@ -9,7 +9,7 @@ import {
     Switch
 } from 'react-router-dom';
 
-import store from '../data/store.js';
+import store from '../data/store';
 import CssBaseline from '@material-ui/core/CssBaseline';
 
 import baseLogin from '../components/login';

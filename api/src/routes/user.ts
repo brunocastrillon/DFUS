@@ -1,6 +1,4 @@
 import { Router } from 'express';
-import jwt from 'express-jwt';
-import { config } from '../config';
 import UserController from '../controllers/user';
 
 class UserRote {
@@ -12,9 +10,7 @@ class UserRote {
     }
 
     rotas() {
-        this.routes.get('/', UserController.find);
-        this.routes.get('/:publicAddress', UserController.show);
-        this.routes.post('/', UserController.store);
+        this.routes.post('/', UserController.toAuth);
     }
 }
 
