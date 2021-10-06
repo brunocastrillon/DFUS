@@ -12,9 +12,9 @@ import {
 import store from '../data/store';
 import CssBaseline from '@material-ui/core/CssBaseline';
 
-import baseLogin from '../components/login';
+import baseLogin from '../containers/login';
 import login from '../pages/login';
-import baseDashboard from '../components/dashboard';
+import baseDashboard from '../containers/dashboard';
 import dashboard from '../pages/dashboard';
 
 export default function Routes() {

@@ -8,21 +8,19 @@ import {
 import {
     saveToken,
     clearToken,
-    getToken,
-    getHeaders
+    getToken
 } from '../storage';
 
 import handleError from '../error';
 
 const api = process.env.REACT_APP_BACKEND_URL;
 
-export const logIn = (publicAddress: any, callback: (arg0: any) => any) => {
-    return function (dispatch: (arg0: { type: string; payload: { publicAddress: any; }; }) => void) {
-        axios.post(api + '/auth', { publicAddress })
+export const logIn = (publicAddress: any, signature: any, callback: any) => {
+    return function (dispatch: any) {
+        axios.post(api + '/auth', { publicAddress, signature })
             .then((response) => {
-                console.log(response);
-                // saveToken(response.data);
-                // dispatch({ type: LOGIN, payload: response.data });
+                saveToken(response.data);
+                dispatch({ type: LOGIN, payload: response.data });
             })
             .catch((error) => callback(handleError(error)));
     }

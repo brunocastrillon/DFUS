@@ -3,23 +3,27 @@ import { connect } from 'react-redux';
 import BaseDashboard from './base';
 import * as actions from '../../data/actions/auth';
 
-interface IDashboardProps {
-    logged: any;
+interface IProps {
+    logged: boolean;
     history: any;
     getLoggedInUser: any;
 }
 
-interface IDashboardState {
-
+interface IState {
 }
 
 const Dashboard = (Component: any) => {
-    class DashboardComponent extends React.Component<IDashboardProps, IDashboardState> {
+    class DashboardComponent extends React.Component<IProps, IState> {
         componentDidMount() {
             const { logged, history, getLoggedInUser } = this.props;
             getLoggedInUser();
             if (!logged) return history.replace("/");
-        }        
+        }
+
+        componentDidUpdate(nextProps: { logged: any; }) {
+            const { logged, history } = this.props;
+            if (!nextProps.logged || !logged) return history.replace("/");
+        }
 
         render() {
             return (

@@ -4,7 +4,7 @@ import BaseLogin from './base';
 import * as actions from '../../data/actions/auth';
 
 interface IProps {
-    logged: any;
+    logged: boolean;
     history: any;
     getLoggedInUser: any;
 }
@@ -18,6 +18,11 @@ const Login = (Component: any) => {
             const { logged, history, getLoggedInUser } = this.props;
             getLoggedInUser();
             if (logged) return history.replace("/dashboard");
+        }
+
+        componentDidUpdate(nextProps: { logged: any; }) {
+            const { history } = this.props;
+            if (!nextProps.logged) return history.replace("/dashboard");
         }
 
         render() {
