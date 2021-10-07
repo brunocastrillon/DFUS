@@ -16,25 +16,12 @@ import { getContractDeployed } from '../../middlewares/blockchain/service';
 
 declare const window: any;
 
-const Files = () => {
+interface IState {
+	listFiles: [];
+    handleList: any;
+}
 
-    const handleListBlockChain = async () => {
-        const ethereum = window.ethereum;
-        const enderecoEnthereum = ethereum._state.accounts > 0 ? ethereum._state.accounts[0] : "";
-        const fileManage = await getContractDeployed();
-
-        let totalFiles = await fileManage.methods.total().call({ from: enderecoEnthereum });
-        let listFiles = [];
-
-        for (let index = 0; index < totalFiles; index++) {
-            let file = await fileManage.methods.read(index).call({ from: enderecoEnthereum });
-            if (file.fileContent !== "") listFiles.push(file);
-        }
-
-        const files: any = listFiles;
-        // this.setState({ ...this.state, files });
-        return files;
-    }    
+const Files = ({ listFiles, handleList }: IState) => {
 
     const handleFileBlockchain = async (fileIPFS: any, fileName: any, fileType: any) => {
         const ethereum = window.ethereum;
@@ -46,8 +33,7 @@ const Files = () => {
         await fileManage.methods.add(fileIPFS, fileName, fileType, fileDateTime).send({ from: enderecoEnthereum, gasPrice: 20e9 })
             .on('receipt', async (result: any) => {
                 // console.log(result.events.fileAdded);
-                // console.log(`https://gateway.ipfs.io/ipfs/${fileIPFS}`);
-                await handleListBlockChain();
+                handleList();
             })
             .on('error', (error: any) => {
                 console.log(error);
@@ -73,13 +59,12 @@ const Files = () => {
                 handleFileBlockchain(fileIPFS.path, file.name, file.type);
             };
         })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const onFileCancel = async () => {
 
     }
-
-    const files: [] = [];
 
     return (
         <Fragment>
@@ -130,7 +115,7 @@ const Files = () => {
                                             <Grid container spacing={3}>
 
                                                 {
-                                                    files.map((file: { fileName: string; fileContent: string; dateTime: number; }, index) => (
+                                                    listFiles.map((file: { fileName: string; fileContent: string; dateTime: number; }, index) => (
                                                         <Grid item xs={4} sm={2} md={4} lg={2} key={index}>
                                                             <a href={`https://gateway.ipfs.io/ipfs/${file.fileContent}`} target={'_blank'} rel="noreferrer">
                                                                 <Card className="card-box card-box-hover-rise-alt mb-0">
@@ -170,7 +155,6 @@ const Files = () => {
 
         </Fragment>
     )
-
 }
 
 export default Files;

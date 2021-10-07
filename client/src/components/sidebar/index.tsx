@@ -13,19 +13,24 @@ import EditarNomeIcon from '@material-ui/icons/EditTwoTone';
 
 import Blockies from 'react-blockies';
 
+declare const window: any;
+
 interface IProps {
 	logOut: any;
 }
 
 const Sidebar = ({ logOut }: IProps) => {
-
+    const ethereum = window.ethereum;
     return (
         <Fragment>
             <div className="bg-night-sky p-3 rounded text-white h-100">
                 <div className="d-flex align-items-start justify-content-between">
                     <div className="avatar-icon-wrapper d-100">
                         <span className="badge-circle badge badge-success">Online</span>
-                        {/* <Blockies seed={publicAddress} className="avatar-icon d-100" /> */}
+                        <Blockies
+                            seed={ethereum._state.accounts > 0 ? ethereum._state.accounts[0] : ""}
+                            className="avatar-icon d-100"
+                         />
                     </div>
 
                     <div className="ml-auto">
@@ -46,17 +51,17 @@ const Sidebar = ({ logOut }: IProps) => {
                         </Tooltip>
                     </div>
                 </div>
-                <div className="font-weight-bold font-size-lg d-flex align-items-center mt-2 mb-0">
+                {/* <div className="font-weight-bold font-size-lg d-flex align-items-center mt-2 mb-0">
                     <span>
-                        {/* {username ? <pre>{username}</pre> : 'nome não cadastrado'}{' '} */}
-                        <p>nome do usuario</p>
+                        {username ? <pre>{username}</pre> : 'nome não cadastrado'}{' '}
                         <IconButton aria-label="delete" className="text-white" size="small" disabled={false} title="editar">
                             <EditarNomeIcon fontSize="small" />
                         </IconButton>
                     </span>
-                </div>
-                <p className="mb-4 font-size-md text-white-50">
+                </div> */}
+                <p className="mt-3 mb-3 font-size-md text-white-50">
                     {/* {publicAddress} */}
+                    {ethereum._state.accounts > 0 ? ethereum._state.accounts[0] : ""}
                 </p>
 
                 <div className="divider opacity-2 my-4" />
