@@ -1,7 +1,6 @@
-import React, { Fragment } from 'react';
+import { Fragment } from 'react';
 
 const Header = () => {
-
     return (
         <Fragment>
             <div className="header-nav-wrapper header-nav-wrapper-lg bg-night-sky bg-composed-wrapper">
@@ -20,7 +19,6 @@ const Header = () => {
             </div>
         </Fragment>
     )
-
 }
 
 export default Header;

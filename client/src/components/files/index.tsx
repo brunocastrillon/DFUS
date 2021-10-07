@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, useCallback } from 'react';
 
 import {
     Grid,
@@ -11,18 +11,75 @@ import Dropzone from 'react-dropzone';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import TimestampFormatter from '../../utils';
+import ipfsClient from '../../middlewares/ipfs/service';
+import { getContractDeployed } from '../../middlewares/blockchain/service';
+
+declare const window: any;
 
 const Files = () => {
 
-    const onFileDrop = async () => {
+    const handleListBlockChain = async () => {
+        const ethereum = window.ethereum;
+        const enderecoEnthereum = ethereum._state.accounts > 0 ? ethereum._state.accounts[0] : "";
+        const fileManage = await getContractDeployed();
 
-    }
+        let totalFiles = await fileManage.methods.total().call({ from: enderecoEnthereum });
+        let listFiles = [];
+
+        for (let index = 0; index < totalFiles; index++) {
+            let file = await fileManage.methods.read(index).call({ from: enderecoEnthereum });
+            if (file.fileContent !== "") listFiles.push(file);
+        }
+
+        const files: any = listFiles;
+        // this.setState({ ...this.state, files });
+        return files;
+    }    
+
+    const handleFileBlockchain = async (fileIPFS: any, fileName: any, fileType: any) => {
+        const ethereum = window.ethereum;
+        const enderecoEnthereum = ethereum._state.accounts > 0 ? ethereum._state.accounts[0] : "";
+        const fileManage = await getContractDeployed();
+
+        const fileDateTime = (new Date()).getTime();
+
+        await fileManage.methods.add(fileIPFS, fileName, fileType, fileDateTime).send({ from: enderecoEnthereum, gasPrice: 20e9 })
+            .on('receipt', async (result: any) => {
+                // console.log(result.events.fileAdded);
+                // console.log(`https://gateway.ipfs.io/ipfs/${fileIPFS}`);
+                await handleListBlockChain();
+            })
+            .on('error', (error: any) => {
+                console.log(error);
+            });
+    }    
+
+    const handleFileIPFS = async (fileReaderResult: any) => {
+        const bytes = new Uint8Array(fileReaderResult as ArrayBuffer);
+        const fileIPFS = await ipfsClient.add(bytes);
+
+        return fileIPFS;
+    };    
+
+    const onFileDrop = useCallback((acceptedFiles: Blob[]) => {
+        acceptedFiles.forEach((file: any) => {
+            const filereader = new FileReader();
+
+            filereader.onabort = () => console.log('file reading was aborted');
+            filereader.onerror = () => console.log('file reading has failed');
+            filereader.readAsArrayBuffer(file);
+            filereader.onload = async () => {
+                const fileIPFS = await handleFileIPFS(filereader.result);
+                handleFileBlockchain(fileIPFS.path, file.name, file.type);
+            };
+        })
+    }, []);
 
     const onFileCancel = async () => {
 
     }
 
-    const files:[] = [];
+    const files: [] = [];
 
     return (
         <Fragment>

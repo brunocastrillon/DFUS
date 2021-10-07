@@ -1,6 +1,9 @@
 import React from 'react';
 
-import {Header, Footer} from "../../components";
+import {
+    Header,
+    Footer
+} from "../../components";
 
 class BaseLogin extends React.Component {
     render() {

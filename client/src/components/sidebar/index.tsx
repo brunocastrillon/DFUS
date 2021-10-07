@@ -11,11 +11,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import EditarNomeIcon from '@material-ui/icons/EditTwoTone';
 
-const Sidebar = () => {
+import Blockies from 'react-blockies';
 
-    const handleLogOut = async () => {
+interface IProps {
+	logOut: any;
+}
 
-    }
+const Sidebar = ({ logOut }: IProps) => {
 
     return (
         <Fragment>
@@ -32,7 +34,7 @@ const Sidebar = () => {
                                 variant="outlined"
                                 color="inherit"
                                 className="text-white d-20"
-                                onClick={handleLogOut}
+                                onClick={logOut}
                             >
                                 <span className="btn-wrapper--icon">
                                     <FontAwesomeIcon

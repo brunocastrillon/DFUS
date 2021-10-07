@@ -1,25 +1,7 @@
-import React, { Fragment } from 'react';
-
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
-import {
-    Grid,
-    Container,
-    InputAdornment,
-    IconButton,
-    Card,
-    CardContent,
-    Button,
-    List,
-    ListItem,
-    Tooltip,
-    TextField
-} from '@material-ui/core';
-
-import MailOutlineTwoToneIcon from '@material-ui/icons/MailOutlineTwoTone';
+import { Fragment } from 'react';
+import { Container } from '@material-ui/core';
 
 const Footer = () => {
-
     return (
         <Fragment>
             <div className="bg-night-sky py-3">
@@ -33,7 +15,6 @@ const Footer = () => {
             </div>
         </Fragment>
     )
-
 }
 
 export default Footer;

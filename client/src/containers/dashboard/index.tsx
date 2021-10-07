@@ -1,7 +1,9 @@
 import React from 'react';
+
 import { connect } from 'react-redux';
-import BaseDashboard from './base';
 import * as actions from '../../data/actions/auth';
+
+import BaseDashboard from './base';
 
 interface IProps {
     logged: boolean;
