@@ -4,9 +4,9 @@ function TimestampFormatter(dateTime: number) {
     var date = timestamp.getDate();
     var month = timestamp.getMonth();
     var year = timestamp.getFullYear();
-    var hours = timestamp.getHours();
-    var minutes = "0" + timestamp.getMinutes();
-    var seconds = "0" + timestamp.getSeconds();
+    // var hours = timestamp.getHours();
+    // var minutes = "0" + timestamp.getMinutes();
+    // var seconds = "0" + timestamp.getSeconds();
 
     var formattedTime = date + '-' + month + '-' + year; //hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
 

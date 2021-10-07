@@ -13,7 +13,7 @@ import {
 
 import handleError from '../error';
 
-const api = process.env.REACT_APP_BACKEND_URL;
+const api = process.env.REACT_APP_BACKEND_URL;//process.env.API;
 
 export const logIn = (publicAddress: any, signature: any, callback: any) => {
     return function (dispatch: any) {

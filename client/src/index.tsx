@@ -1,6 +1,5 @@
 // import './index.css';
 import { config as dotEnvConfig } from 'dotenv';
-import React from 'react';
 import ReactDOM from 'react-dom';
 
 import  App from './app/app';
