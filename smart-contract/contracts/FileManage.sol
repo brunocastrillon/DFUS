@@ -1,7 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.9;
 
-contract FileManage {
+//import "../node_modules/@openzeppelin/contracts/access/Ownable.sol";
+import "./FileToken.sol";
+
+contract FileManage is FileToken {
     struct File {
         string Content;
         string Name;
@@ -62,5 +65,13 @@ contract FileManage {
         returns (uint)
     {
         return _files[msg.sender].length;
+    }
+
+    function mintToken() public {
+
+    }
+
+    function transferToken() public {
+
     }    
 }

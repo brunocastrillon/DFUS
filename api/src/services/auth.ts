@@ -29,7 +29,7 @@ class AuthService {
                 if (address.toLowerCase() === publicAddress.toLowerCase()) {
                     return userModel;
                 } else {
-                    throw new Error('Signature verification failed".');
+                    throw new Error('Falha ao verificar assinatura".');
                     //return null;
                 }
             })
