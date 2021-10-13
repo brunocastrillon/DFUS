@@ -1,26 +1,27 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.9;
 
-//import "../node_modules/@openzeppelin/contracts/access/Ownable.sol";
-import "./FileToken.sol";
-
-contract FileManage is FileToken {
+contract FileManage {
     struct File {
         string Content;
+        string Hash;
         string Name;
+        string Description;
         string Type;
         uint DateTime;
     }
     mapping(address => File[]) _files;
 
-    event fileAdded(address sender, string content);
+    event fileAdded(address sender, string name);
 
     constructor() { }
 
     function add
     (
         string memory fileContent,
+        string memory fileHash,
         string memory fileName,
+        string memory fileDescription,
         string memory fileType,
         uint dateTime
     )
@@ -28,12 +29,14 @@ contract FileManage is FileToken {
     {
         _files[msg.sender].push(File({
             Content: fileContent,
+            Hash: fileHash,
             Name: fileName,
+            Description: fileDescription,
             Type: fileType,
             DateTime: dateTime
         }));
 
-        emit fileAdded(msg.sender, fileContent);
+        emit fileAdded(msg.sender, fileName);
     }
 
     function read
@@ -45,7 +48,9 @@ contract FileManage is FileToken {
         returns
         (
             string memory fileContent,
+            string memory fileHash,
             string memory fileName,
+            string memory fileDescription,
             string memory fileType,
             uint dateTime
         )
@@ -53,7 +58,9 @@ contract FileManage is FileToken {
         File memory file = _files[msg.sender][index];
         return (
             file.Content,
+            file.Hash,
             file.Name,
+            file.Description,
             file.Type,
             file.DateTime
         );
@@ -66,12 +73,4 @@ contract FileManage is FileToken {
     {
         return _files[msg.sender].length;
     }
-
-    function mintToken() public {
-
-    }
-
-    function transferToken() public {
-
-    }    
 }

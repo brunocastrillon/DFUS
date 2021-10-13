@@ -3,4 +3,5 @@ export const
     GET_DASHBOARD = 'GET_DASHBOARD',
     LOGIN = 'LOGIN',
     LOGOUT = 'LOGOUT',
-    USER = 'USER,'
+    USER = 'USER,',
+    FILE = 'FILE,'

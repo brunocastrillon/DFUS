@@ -102,3 +102,35 @@ dist
 
 # TernJS port file
 .tern-port
+
+smart-contract/build/contracts/Migrations.json
+
+smart-contract/build/contracts/FileManage.json
+
+client/src/middlewares/blockchain/contracts/Address.json
+
+client/src/middlewares/blockchain/contracts/Context.json
+
+client/src/middlewares/blockchain/contracts/Counters.json
+
+client/src/middlewares/blockchain/contracts/ERC165.json
+
+client/src/middlewares/blockchain/contracts/ERC721.json
+
+client/src/middlewares/blockchain/contracts/ERC721URIStorage.json
+
+client/src/middlewares/blockchain/contracts/FileManage.json
+
+client/src/middlewares/blockchain/contracts/FileToken.json
+
+client/src/middlewares/blockchain/contracts/IERC165.json
+
+client/src/middlewares/blockchain/contracts/IERC721.json
+
+client/src/middlewares/blockchain/contracts/IERC721Metadata.json
+
+client/src/middlewares/blockchain/contracts/IERC721Receiver.json
+
+client/src/middlewares/blockchain/contracts/Migrations.json
+
+client/src/middlewares/blockchain/contracts/Strings.json
