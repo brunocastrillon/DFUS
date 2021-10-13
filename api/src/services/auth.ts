@@ -6,7 +6,6 @@ import UserService from './user';
 import { config } from '../config';
 
 class AuthService {
-
     public async create(signature: any, publicAddress: any) {
         let userModel = new UserModel();
 
