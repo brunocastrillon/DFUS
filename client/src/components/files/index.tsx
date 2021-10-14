@@ -1,4 +1,8 @@
-import { Fragment, useCallback } from 'react';
+import {
+    Fragment,
+    useState
+}
+    from 'react';
 
 import {
     Card,
@@ -27,18 +31,27 @@ interface IState {
 }
 
 const Files = ({ listFiles, handleList }: IState) => {
+    const [form, setForm] = useState({ descricao: "" });
 
-    const handleFileBlockchain = async (fileIPFS: any, fileHash: string, fileName: any, fileType: any) => {
+    const clearInput = () => {
+        setForm({ ...form, descricao: "" });
+    }
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setForm({ ...form, [e.target.name]: e.target.value });
+    }
+
+    const handleFileBlockchain = async (fileIPFS: any, fileHash: string, fileName: any, fileDescription: any, fileType: any) => {
         const ethereum = window.ethereum;
         const enderecoEnthereum = ethereum._state.accounts > 0 ? ethereum._state.accounts[0] : "";
         const fileManage = await getContractDeployed();
-
         const fileDateTime = (new Date()).getTime();
 
-        await fileManage.methods.add(fileIPFS, fileHash, fileName, fileType, fileDateTime).send({ from: enderecoEnthereum, gasPrice: 20e9 })
+        await fileManage.methods.add(fileIPFS, fileHash, fileName, fileDescription, fileType, fileDateTime).send({ from: enderecoEnthereum, gasPrice: 20e9 })
             .on('receipt', async (result: any) => {
                 // console.log(result.events.fileAdded);
                 handleList();
+                clearInput();
             })
             .on('error', (error: any) => {
                 console.log(error);
@@ -52,7 +65,7 @@ const Files = ({ listFiles, handleList }: IState) => {
         return fileIPFS;
     };
 
-    const onFileDrop = useCallback((acceptedFiles: Blob[]) => {
+    const onFileDrop = (acceptedFiles: Blob[]) => {
         acceptedFiles.forEach((file: any) => {
             const filereader = new FileReader();
 
@@ -60,13 +73,14 @@ const Files = ({ listFiles, handleList }: IState) => {
             filereader.onerror = () => console.log('file reading has failed');
             filereader.readAsArrayBuffer(file);
             filereader.onload = async () => {
+                const fileDescription = form.descricao;
                 const fileHash = await generateHash(filereader.result);
                 const fileIPFS = await handleFileIPFS(filereader.result);
-                handleFileBlockchain(fileIPFS.path, fileHash, file.name, file.type);
+
+                handleFileBlockchain(fileIPFS.path, fileHash, file.name, fileDescription, file.type);
             };
-        })
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+        });
+    }
 
     const onFileCancel = async () => {
 
@@ -94,14 +108,14 @@ const Files = ({ listFiles, handleList }: IState) => {
                                             id="descricao"
                                             name="descricao"
                                             label="Descrição"
-                                            // value={historia}
+                                            value={form.descricao}
                                             size="small"
                                             variant="outlined"
                                             className="mt-1"
                                             rows="5"
                                             multiline
                                             fullWidth
-                                        // onChange={(ev) => this.onChangeInput("historia", ev)}
+                                            onChange={handleChange}
                                         />
 
                                     </Grid>

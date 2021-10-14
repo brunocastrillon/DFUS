@@ -14,9 +14,9 @@ export function formatTimeStamp(dateTime: number) {
 }
 
 export async function generateHash(file: any) {
-    const data = file.buffer;
+    // const data = file.buffer;
     const SHA256 = CryptoJS.algo.SHA256.create();
-    const wordBuffer = CryptoJS.lib.WordArray.create(data);
+    const wordBuffer = CryptoJS.lib.WordArray.create(file);
 
     SHA256.update(wordBuffer);
 
