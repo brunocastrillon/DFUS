@@ -3,13 +3,10 @@ import { Fragment } from 'react';
 import {
     Grid,
     Button,
-    Tooltip,
-    IconButton
+    Tooltip
 } from '@material-ui/core';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
-import EditarNomeIcon from '@material-ui/icons/EditTwoTone';
 
 import Blockies from 'react-blockies';
 
@@ -51,16 +48,7 @@ const Sidebar = ({ logOut }: IProps) => {
                         </Tooltip>
                     </div>
                 </div>
-                {/* <div className="font-weight-bold font-size-lg d-flex align-items-center mt-2 mb-0">
-                    <span>
-                        {username ? <pre>{username}</pre> : 'nome não cadastrado'}{' '}
-                        <IconButton aria-label="delete" className="text-white" size="small" disabled={false} title="editar">
-                            <EditarNomeIcon fontSize="small" />
-                        </IconButton>
-                    </span>
-                </div> */}
                 <p className="mt-3 mb-3 font-size-md text-white-50">
-                    {/* {publicAddress} */}
                     {ethereum._state.accounts > 0 ? ethereum._state.accounts[0] : ""}
                 </p>
 
@@ -113,8 +101,11 @@ const Sidebar = ({ logOut }: IProps) => {
                             <span className="badge-circle badge badge-success">
                                 Online
                             </span>
-                            <div className="avatar-icon rounded-circle">
-                                {/* <img alt="..." src={avatar1} /> */}
+                            <div className="avatar-icon rounded-circle d-40">
+                                <Blockies
+                                    seed={"0x5ed97ed5b61cf820420f853eaa3bdb24aea0e5cb"}
+                                    className="avatar-icon d-40"
+                                />
                             </div>
                         </a>
                         <div className="pl-2">
@@ -141,8 +132,11 @@ const Sidebar = ({ logOut }: IProps) => {
                             <div className="badge badge-primary badge-circle">
                                 Offline
                             </div>
-                            <div className="avatar-icon rounded-circle">
-                                {/* <img alt="..." src={avatar2} /> */}
+                            <div className="avatar-icon rounded-circle d-40">
+                                <Blockies
+                                    seed={"0x5ed97ed5b61cf820420f853eaa3bdb24aea0e5cb"}
+                                    className="avatar-icon d-40"
+                                />
                             </div>
                         </a>
                         <div className="pl-2">
@@ -169,8 +163,11 @@ const Sidebar = ({ logOut }: IProps) => {
                             <span className="badge-circle badge badge-success">
                                 Online
                             </span>
-                            <div className="avatar-icon rounded-circle">
-                                {/* <img alt="..." src={avatar3} /> */}
+                            <div className="avatar-icon rounded-circle d-40">
+                                <Blockies
+                                    seed={"0x5ed97ed5b61cf820420f853eaa3bdb24aea0e5cb"}
+                                    className="avatar-icon d-40"
+                                />
                             </div>
                         </a>
                         <div className="pl-2">
