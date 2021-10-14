@@ -22,7 +22,7 @@ export default function Routes() {
         <Fragment>
             <Provider store={store}>
                 <Router history={history}>
-                    <BrowserRouter basename="/alexandria/">
+                    <BrowserRouter>{/* <BrowserRouter basename="/alexandria/"> */}
                         <CssBaseline />
                         <Switch>
                             <Route path="/" exact component={baseLogin(login)} />

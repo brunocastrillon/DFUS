@@ -128,7 +128,7 @@ import {
 	faSignOutAlt,
 	faLink
 } from '@fortawesome/free-solid-svg-icons';
-import { useEffect } from 'react';
+// import { useEffect } from 'react';
 
 library.add(
 	far,
@@ -255,20 +255,20 @@ library.add(
 	faLink
 );
 
-declare const window: any;
+// declare const window: any;
 
 function App() {
-	useEffect(() => {
-		if (window.ethereum) {
-			window.ethereum.on('chainChanged', () => {
-				window.location.reload();
-			});
+	// useEffect(() => {
+	// 	if (window.ethereum) {
+	// 		window.ethereum.on('chainChanged', () => {
+	// 			window.location.reload();
+	// 		});
 
-			window.ethereum.on('accountsChanged', () => {
-				window.location.reload();
-			});
-		}
-	});
+	// 		window.ethereum.on('accountsChanged', () => {
+	// 			window.location.reload();
+	// 		});
+	// 	}
+	// });
 
 	return <Routes />
 }
