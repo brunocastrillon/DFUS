@@ -16,6 +16,22 @@ contract FileManage {
 
     constructor() { }
 
+    modifier onlyValidInformation
+    (
+        string memory fileContent,
+        string memory fileHash,
+        string memory fileName
+    )
+    {
+        bytes memory fileContentTemp = bytes(fileContent);
+        bytes memory fileHashTemp = bytes(fileHash);
+        bytes memory fileNameTemp = bytes(fileName);
+
+        bool informacaoValida = fileContentTemp.length == 0 || fileHashTemp.length == 0 || fileNameTemp.length == 0;
+        require(!informacaoValida, 'informacao invalida');
+        _;
+    }
+
     function add
     (
         string memory fileContent,
@@ -26,6 +42,7 @@ contract FileManage {
         uint dateTime
     )
         public
+        onlyValidInformation(fileContent, fileHash, fileName)
     {
         _files[msg.sender].push(File({
             Content: fileContent,

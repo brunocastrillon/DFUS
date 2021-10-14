@@ -1,30 +1,51 @@
 import assert = require('assert');
+
 import {
     accounts,
     contract
 } from '@openzeppelin/test-environment';
 
+const {
+    use,
+    expect
+} = require('chai');
+
+const { solidity } = require('ethereum-waffle');    
+
 const truffleAssert = require('truffle-assertions');
 const FileManage = contract.fromArtifact('FileManage');
 
-const [_owner, _sender] = accounts;
-const _content = "QmW8LsLjznWHQs2GDrxJkem6dc93dVQj9xLDT1uAK6Yugd";
-const _hash = "87d326f47140d195acc2d31db7bda03237da38b60539d3b7053c1b964168f8d0";
-const _name = "arquivo-teste.pdf";
-const _description = "alguma descrição do arquivo imputada pelo usuario";
-const _type = "application/pdf";
-const _dateTime = (new Date()).getTime();
+use(solidity);
 
 describe("Alexandria-File-Manage-Test", () => {
 
-    it("Ao adicionar um novo arquivo, deverá retornar o evento: fileAdded", async () => {
-        let fileManage = await FileManage.new();
-        let file = await fileManage.add(_content, _hash, _name, _description, _type, _dateTime, { from: _sender });
+    const [_owner, _sender] = accounts;
+    const _contentNull = "";
+    const _content = "QmW8LsLjznWHQs2GDrxJkem6dc93dVQj9xLDT1uAK6Yugd";
+    const _hash = "87d326f47140d195acc2d31db7bda03237da38b60539d3b7053c1b964168f8d0";
+    const _name = "arquivo-teste.pdf";
+    const _description = "alguma descrição do arquivo imputada pelo usuario";
+    const _type = "application/pdf";
+    const _dateTime = (new Date()).getTime();
 
-        truffleAssert.eventEmitted(file, 'fileAdded', (ev: { sender: string; name: any; }) => {
-            return ev.sender === _sender && ev.name === _name;
+    describe('Testando o método add()', () => {
+        it('Usuário não enviou o hash do arquivo gerado pela rede ipfs, a transação foi revertida', async () => {
+            let fileManage = await FileManage.new();
+
+            await expect(
+                fileManage.add(_contentNull, _hash, _name, _description, _type, _dateTime, { from: _sender })
+            ).to.be.revertedWith("informacao invalida");
         });
-    });
+
+        it("Ao adicionar um novo arquivo, deverá retornar o evento: fileAdded", async () => {
+            let fileManage = await FileManage.new();
+            let file = await fileManage.add(_content, _hash, _name, _description, _type, _dateTime, { from: _sender });
+    
+            truffleAssert.eventEmitted(file, 'fileAdded', (ev: { sender: string; name: any; }) => {
+                return ev.sender === _sender && ev.name === _name;
+            });
+        });        
+    })
 
     it("Deverá retornar informações do arquivo", async () => {
         let fileManage = await FileManage.new();
