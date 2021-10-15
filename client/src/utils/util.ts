@@ -8,7 +8,6 @@ export function formatTimeStamp(dateTime: number) {
     // var hours = timestamp.getHours();
     // var minutes = "0" + timestamp.getMinutes();
     // var seconds = "0" + timestamp.getSeconds();
-    console.log(month);        
     var formattedTime = date + '-' + month + '-' + year;
 
     return formattedTime;

@@ -1,14 +1,16 @@
 import {
     Fragment,
     useState
-}
-    from 'react';
+} from 'react';
 
 import {
     Card,
     CardContent,
     Grid,
-    TextField
+    TextField,
+    Dialog,
+    DialogTitle, DialogContent, DialogContentText, DialogActions,
+    Button
 } from '@material-ui/core';
 
 import Dropzone from 'react-dropzone';
@@ -31,7 +33,20 @@ interface IState {
 }
 
 const Files = ({ listFiles, handleList }: IState) => {
+    const [modalIsOpen, setModalIsOpen] = useState(false);
+    const [modalData, setModalData] = useState({ fileContent: "", fileHash: "", fileName: "", fileDescription: "", fileType: "", dateTime: 0, index: 0 });
     const [form, setForm] = useState({ descricao: "" });
+
+    const modalOpen = (file: { fileContent: string; fileHash: string; fileName: string; fileDescription: string; fileType: string; dateTime: number; }, index: number, e:any) => {
+        setModalData({ fileContent: file.fileContent, fileHash: file.fileHash, fileName: file.fileName, fileDescription: file.fileDescription, fileType: file.fileType, dateTime: file.dateTime, index: index });
+        setModalIsOpen(true);
+        e.preventDefault();
+    }
+
+    const modalClose = () => {
+        setModalData({ ...modalData, fileContent: "", fileHash: "", fileName: "", fileDescription: "", index: 0 });
+        setModalIsOpen(false);
+    }
 
     const clearInput = () => {
         setForm({ ...form, descricao: "" });
@@ -167,37 +182,74 @@ const Files = ({ listFiles, handleList }: IState) => {
                                     <Grid item xs={12} sm={12}>
                                         <div className="text-center d-flex align-items-left mb-0">
                                             <Grid container spacing={3}>
-
                                                 {
-                                                    listFiles.map((file: { fileName: string; fileContent: string; dateTime: number; }, index) => (
+                                                    listFiles.map((file: any, index) => (
                                                         <Grid item xs={4} sm={2} md={4} lg={2} key={index}>
-                                                            <a href={`https://gateway.ipfs.io/ipfs/${file.fileContent}`} target={'_blank'} rel="noreferrer">
+                                                            <a href="/#" onClick={(e) => modalOpen(file, index, e)}>
                                                                 <Card className="card-box card-box-hover-rise-alt mb-0">
-                                                                    <CardContent className="p-3">
-                                                                        <div className="card-img-wrapper">
-                                                                            <div className="rounded py-3 mb-0 bg-secondary d-flex align-items-center align-content-center">
-                                                                                <FontAwesomeIcon icon={['far', 'file-pdf']} className="display-3 text-primary mx-auto" />
+                                                                        <CardContent className="p-3">
+                                                                            <div className="card-img-wrapper">
+                                                                                <div className="rounded py-3 mb-0 bg-secondary d-flex align-items-center align-content-center">
+                                                                                    <FontAwesomeIcon icon={['far', 'file-pdf']} className="display-3 text-primary mx-auto" />
+                                                                                </div>
+                                                                                <b className="small">
+                                                                                    {file.fileName}
+                                                                                </b>
+                                                                                <div>
+                                                                                    <small className="opacity-6">
+                                                                                        Criado:{' '}
+                                                                                        <span className="text-black-50">
+                                                                                            {formatTimeStamp(file.dateTime)}
+                                                                                        </span>
+                                                                                    </small>
+                                                                                </div>
                                                                             </div>
-                                                                            <b className="small">
-                                                                                {file.fileName}
-                                                                            </b>
-                                                                            <div>
-                                                                                <small className="opacity-6">
-                                                                                    Criado:{' '}
-                                                                                    <span className="text-black-50">
-                                                                                        {formatTimeStamp(file.dateTime)}
-                                                                                    </span>
-                                                                                </small>
-                                                                            </div>
-                                                                        </div>
-                                                                    </CardContent>
-                                                                </Card>
+                                                                        </CardContent>
+                                                                    </Card>
                                                             </a>
                                                         </Grid>
                                                     ))
                                                 }
-
                                             </Grid>
+
+                                            <Dialog maxWidth="sm" open={modalIsOpen} onClose={() => modalClose()}>
+                                                <DialogTitle id="form-dialog-title">
+                                                    {JSON.stringify(modalData.fileName).split("\"")}
+                                                    <span className="text-black-50 d-block font-size-sm">
+                                                        {JSON.stringify(modalData.fileHash).split("\"")}
+                                                    </span>
+                                                </DialogTitle>
+                                                <DialogContent>
+                                                    <DialogContentText>
+                                                        <p className="font-size-md text-black-50">
+                                                            {JSON.stringify(modalData.fileDescription).split("\"")}
+                                                        </p>                                                        
+                                                    </DialogContentText>
+
+                                                    <div className="my-3 font-size-sm p-3 bg-secondary rounded-sm">
+                                                        <div className="d-flex justify-content-between py-2">
+                                                            <span className="font-weight-bold mr-3">Tipo:</span>
+                                                            <span className="text-black-50">
+                                                                {JSON.stringify(modalData.fileType).split("\"")}
+                                                            </span>
+                                                        </div>
+                                                        <div className="d-flex justify-content-between py-2">
+                                                            <span className="font-weight-bold mr-3">Data de Envio:</span>
+                                                            <span className="text-black-50">
+                                                                {JSON.stringify(formatTimeStamp(modalData.dateTime)).split("\"")}
+                                                            </span>
+                                                        </div>
+                                                        <div className="d-flex justify-content-between py-2">
+                                                            <span className="font-weight-bold">Arquivo:</span>
+                                                            <span className="text-black-50">
+                                                                <a href={`https://gateway.ipfs.io/ipfs/${JSON.stringify(modalData.fileContent).replace("\"", "").replace("\"", "")}`} target={'_blank'} rel="noreferrer">
+                                                                    Download
+                                                                </a>
+                                                            </span>
+                                                        </div>
+                                                    </div>                                                    
+                                                </DialogContent>
+                                            </Dialog>
                                         </div>
                                     </Grid>
                                 </Grid>
